@@ -6,6 +6,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { isValidRut, normalizeRut } from '@/lib/rut'
 import { calcularFechaLimite } from '@/lib/fecha-limite'
+import { parseFechaEmision } from '@/lib/fecha-emision'
 import { asignarMedico } from '@/lib/asignacion'
 
 export type CrearCasoState = { error: string | null }
@@ -31,7 +32,8 @@ export async function crearCasoIndividual(_prevState: CrearCasoState, formData: 
   if (!isValidRut(rut)) return { error: 'RUT inválido' }
   if (!nombreEvaluado) return { error: 'Nombre requerido' }
   if (!tipoLicencia) return { error: 'Tipo de licencia requerido' }
-  if (isNaN(Date.parse(fechaEmisionLicenciaRaw))) return { error: 'Fecha de emisión inválida' }
+  const fechaEmisionLicencia = parseFechaEmision(fechaEmisionLicenciaRaw)
+  if (!fechaEmisionLicencia) return { error: 'Fecha de emisión inválida' }
 
   const organizacion = await prisma.organizacion.findUnique({ where: { id: organizacionId } })
   if (!organizacion) return { error: 'Organización inválida' }
@@ -48,7 +50,7 @@ export async function crearCasoIndividual(_prevState: CrearCasoState, formData: 
       rutEvaluado: normalizeRut(rut),
       nombreEvaluado,
       tipoLicencia,
-      fechaEmisionLicencia: new Date(fechaEmisionLicenciaRaw),
+      fechaEmisionLicencia,
       fechaIngreso,
       fechaLimite,
       prioridad,

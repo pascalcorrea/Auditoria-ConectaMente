@@ -46,6 +46,7 @@ export default function ImportarCasosPage() {
 
     setLoading(true)
     setError(null)
+    setResultado(null)
 
     const res = await fetch('/api/admin/casos/importar/confirmar', {
       method: 'POST',
@@ -123,13 +124,15 @@ export default function ImportarCasosPage() {
             <p className="mt-2 text-sm text-brand-danger">
               Se crearon {resultado.creados} de {resultado.enviados} casos enviados — algunas filas fueron
               rechazadas al confirmar (por ejemplo, si una organización cambió entre la vista previa y la
-              confirmación). Revisa <a href="/admin/casos" className="underline">/admin/casos</a> antes de
-              continuar.
+              confirmación). Revisa <a href="/admin/casos" className="underline">/admin/casos</a> para ver qué
+              se creó — no vuelvas a confirmar esta lista, o los casos ya creados se duplicarán.
             </p>
           )}
-          <Button className="mt-4" onClick={handleConfirmar} disabled={!hayFilasValidas || loading}>
-            {loading ? 'Confirmando…' : 'Confirmar importación'}
-          </Button>
+          {!resultado && (
+            <Button className="mt-4" onClick={handleConfirmar} disabled={!hayFilasValidas || loading}>
+              {loading ? 'Confirmando…' : 'Confirmar importación'}
+            </Button>
+          )}
         </div>
       )}
     </div>

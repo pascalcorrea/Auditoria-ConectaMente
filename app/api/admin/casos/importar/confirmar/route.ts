@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { isValidRut, normalizeRut } from '@/lib/rut'
 import { calcularFechaLimite } from '@/lib/fecha-limite'
+import { parseFechaEmision } from '@/lib/fecha-emision'
 import { asignarMedico } from '@/lib/asignacion'
 
 type FilaConfirmar = {
@@ -48,7 +49,8 @@ export async function POST(request: NextRequest) {
       if (typeof fila.nombre !== 'string' || !fila.nombre.trim()) continue
       if (typeof fila.tipoLicencia !== 'string' || !fila.tipoLicencia.trim()) continue
       if (fila.prioridad !== 'normal' && fila.prioridad !== 'urgente') continue
-      if (typeof fila.fechaEmision !== 'string' || isNaN(Date.parse(fila.fechaEmision))) continue
+      const fechaEmisionLicencia = parseFechaEmision(fila.fechaEmision)
+      if (!fechaEmisionLicencia) continue
 
       const organizacion = organizacionPorNombre.get(fila.organizacion)
       if (!organizacion) continue
@@ -64,7 +66,7 @@ export async function POST(request: NextRequest) {
           rutEvaluado: normalizeRut(fila.rut),
           nombreEvaluado: fila.nombre.trim(),
           tipoLicencia: fila.tipoLicencia.trim(),
-          fechaEmisionLicencia: new Date(fila.fechaEmision),
+          fechaEmisionLicencia,
           fechaIngreso,
           fechaLimite,
           prioridad: fila.prioridad,
