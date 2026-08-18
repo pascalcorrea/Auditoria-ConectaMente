@@ -25,26 +25,34 @@ describe('asignarMedico', () => {
   })
 
   afterEach(async () => {
-    if (ids.casoIds.length > 0) {
-      await prisma.caso.deleteMany({ where: { id: { in: ids.casoIds } } })
-    }
-    if (ids.medicoIds.length > 0) {
-      await prisma.usuario.deleteMany({ where: { id: { in: ids.medicoIds } } })
-    }
-    if (ids.organizacionId) {
-      await prisma.organizacion.delete({ where: { id: ids.organizacionId } })
-    }
-    ids.casoIds = []
-    ids.medicoIds = []
-    ids.organizacionId = undefined
+    try {
+      if (ids.casoIds.length > 0) {
+        await prisma.caso.deleteMany({ where: { id: { in: ids.casoIds } } })
+      }
+      if (ids.medicoIds.length > 0) {
+        await prisma.usuario.deleteMany({ where: { id: { in: ids.medicoIds } } })
+      }
+      if (ids.organizacionId) {
+        await prisma.organizacion.delete({ where: { id: ids.organizacionId } })
+      }
+    } finally {
+      // Always restore pre-existing médicos to active, even if a delete
+      // above throws — otherwise a mid-teardown failure would leave the
+      // shared dev database's real médicos deactivated for every other
+      // worktree/session, the exact pollution this test isolation exists
+      // to prevent.
+      ids.casoIds = []
+      ids.medicoIds = []
+      ids.organizacionId = undefined
 
-    if (preexistingMedicoIds.length > 0) {
-      await prisma.usuario.updateMany({
-        where: { id: { in: preexistingMedicoIds } },
-        data: { activo: true },
-      })
+      if (preexistingMedicoIds.length > 0) {
+        await prisma.usuario.updateMany({
+          where: { id: { in: preexistingMedicoIds } },
+          data: { activo: true },
+        })
+      }
+      preexistingMedicoIds = []
     }
-    preexistingMedicoIds = []
   })
 
   afterAll(async () => {
