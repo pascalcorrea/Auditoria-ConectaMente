@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth'
 import { notFound } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { EstadoBadge } from '@/components/ui/StatusBadge'
+import { EstadoBadge, PrioridadBadge } from '@/components/ui/StatusBadge'
 import { TopHeader } from '@/components/layout/TopHeader'
 import type { EstadoCaso } from '@prisma/client'
 
@@ -26,7 +26,7 @@ export default async function ClienteCasoDetallePage({
   const { id } = await params
   const caso = await prisma.caso.findUnique({
     where: { id },
-    include: { organizacion: true, informe: { include: { medico: true } } },
+    include: { informe: { include: { medico: true } } },
   })
 
   if (!caso || caso.organizacionId !== session.user.organizacionId) notFound()
@@ -48,7 +48,10 @@ export default async function ClienteCasoDetallePage({
                 {caso.tipoLicencia} · Ingresado {caso.fechaIngreso.toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' })}
               </div>
             </div>
-            <EstadoBadge estado={caso.estado} />
+            <div className="flex gap-2">
+              <PrioridadBadge prioridad={caso.prioridad} />
+              <EstadoBadge estado={caso.estado} />
+            </div>
           </div>
 
           <div className="mb-8 flex items-center">
