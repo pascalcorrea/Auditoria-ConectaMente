@@ -9,14 +9,30 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
   }
 
-  const formData = await request.formData()
+  let formData: FormData
+  try {
+    formData = await request.formData()
+  } catch {
+    return NextResponse.json({ error: 'Solicitud inválida' }, { status: 400 })
+  }
+
   const file = formData.get('file')
   if (!(file instanceof File)) {
     return NextResponse.json({ error: 'Archivo requerido' }, { status: 400 })
   }
 
-  const buffer = await file.arrayBuffer()
-  const filas = await parseCasosExcel(buffer)
+  // parseCasosExcel (and the xlsx library underneath it) is the one place
+  // in this feature that parses arbitrary, untrusted uploaded bytes — a
+  // corrupt file or a non-spreadsheet renamed to .xlsx must return a clean
+  // 400, not an unhandled 500, matching how the confirm route already
+  // treats malformed input.
+  let filas
+  try {
+    const buffer = await file.arrayBuffer()
+    filas = await parseCasosExcel(buffer)
+  } catch {
+    return NextResponse.json({ error: 'No se pudo leer el archivo — verifica que sea un Excel/CSV válido' }, { status: 400 })
+  }
 
   return NextResponse.json({ filas })
 }

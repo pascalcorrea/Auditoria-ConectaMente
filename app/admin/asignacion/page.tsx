@@ -2,6 +2,11 @@ import { prisma } from '@/lib/prisma'
 import { ESTADOS_ACTIVOS } from '@/lib/asignacion'
 import { ReasignarSelect } from './ReasignarSelect'
 
+// See app/admin/casos/page.tsx for why this is needed — without it, Next
+// prerenders workload counts and the caso table at build time and they
+// never update, even after a reassignment.
+export const dynamic = 'force-dynamic'
+
 export default async function AsignacionPage() {
   const medicos = await prisma.usuario.findMany({
     where: { rol: 'medico', activo: true },

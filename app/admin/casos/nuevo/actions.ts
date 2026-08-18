@@ -1,6 +1,8 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { isValidRut, normalizeRut } from '@/lib/rut'
 import { calcularFechaLimite } from '@/lib/fecha-limite'
@@ -9,6 +11,16 @@ import { asignarMedico } from '@/lib/asignacion'
 export type CrearCasoState = { error: string | null }
 
 export async function crearCasoIndividual(_prevState: CrearCasoState, formData: FormData): Promise<CrearCasoState> {
+  // middleware.ts only gates page navigation to /admin/*, not the server
+  // action itself — Next.js resolves an action by its own ID regardless of
+  // which route the POST targets, so a session with a different role could
+  // otherwise invoke this directly. Same check the /api/admin/* route
+  // handlers already do.
+  const session = await getServerSession(authOptions)
+  if (session?.user?.rol !== 'backoffice') {
+    return { error: 'No autorizado' }
+  }
+
   const rut = String(formData.get('rut') ?? '')
   const nombreEvaluado = String(formData.get('nombreEvaluado') ?? '').trim()
   const organizacionId = String(formData.get('organizacionId') ?? '')

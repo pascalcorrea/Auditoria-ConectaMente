@@ -16,6 +16,7 @@ export default function ImportarCasosPage() {
   const [filas, setFilas] = useState<FilaImportacion[] | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [resultado, setResultado] = useState<{ creados: number; enviados: number } | null>(null)
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -58,7 +59,19 @@ export default function ImportarCasosPage() {
       return
     }
 
-    router.push('/admin/casos')
+    const data = await res.json()
+    const creados = typeof data.creados === 'number' ? data.creados : 0
+
+    if (creados === filasValidas.length) {
+      router.push('/admin/casos')
+      return
+    }
+
+    // The confirm endpoint re-validates every row independently and may
+    // reject some the preview accepted (e.g. an organización renamed in
+    // between) — surface that instead of silently redirecting as if
+    // everything the user saw as "valid" actually got created.
+    setResultado({ creados, enviados: filasValidas.length })
   }
 
   const hayFilasValidas = filas?.some((f) => f.errores.length === 0) ?? false
@@ -106,6 +119,14 @@ export default function ImportarCasosPage() {
             </tbody>
           </table>
           {error && <p className="mt-2 text-sm text-brand-danger">{error}</p>}
+          {resultado && (
+            <p className="mt-2 text-sm text-brand-danger">
+              Se crearon {resultado.creados} de {resultado.enviados} casos enviados — algunas filas fueron
+              rechazadas al confirmar (por ejemplo, si una organización cambió entre la vista previa y la
+              confirmación). Revisa <a href="/admin/casos" className="underline">/admin/casos</a> antes de
+              continuar.
+            </p>
+          )}
           <Button className="mt-4" onClick={handleConfirmar} disabled={!hayFilasValidas || loading}>
             {loading ? 'Confirmando…' : 'Confirmar importación'}
           </Button>
