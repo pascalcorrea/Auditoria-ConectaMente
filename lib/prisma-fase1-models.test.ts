@@ -60,8 +60,11 @@ describe('Fase 1 models', () => {
       data: {
         organizacionId: organizacion.id,
         medicoId: medico.id,
+        rutEvaluado: '12345678-5',
+        nombreEvaluado: 'Test Evaluado',
         estado: 'recibido',
         tipoLicencia: 'licencia comun',
+        fechaEmisionLicencia: new Date(),
         fechaIngreso: new Date(),
         fechaLimite: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
         prioridad: 'normal',
@@ -112,8 +115,11 @@ describe('Fase 1 models', () => {
       prisma.caso.create({
         data: {
           organizacionId: 'does-not-exist',
+          rutEvaluado: '12345678-5',
+          nombreEvaluado: 'Test Evaluado',
           estado: 'recibido',
           tipoLicencia: 'licencia comun',
+          fechaEmisionLicencia: new Date(),
           fechaIngreso: new Date(),
           fechaLimite: new Date(),
           prioridad: 'normal',
@@ -134,8 +140,11 @@ describe('Fase 1 models', () => {
     const caso = await prisma.caso.create({
       data: {
         organizacionId: organizacion.id,
+        rutEvaluado: '12345678-5',
+        nombreEvaluado: 'Test Evaluado',
         estado: 'recibido',
         tipoLicencia: 'licencia comun',
+        fechaEmisionLicencia: new Date(),
         fechaIngreso: new Date(),
         fechaLimite: new Date(),
         prioridad: 'normal',
