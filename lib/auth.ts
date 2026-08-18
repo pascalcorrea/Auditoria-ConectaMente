@@ -1,6 +1,7 @@
 import type { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { verifyCredentials } from './auth-credentials'
+import { prisma } from './prisma'
 import type { Rol } from '@prisma/client'
 
 export const authOptions: NextAuthOptions = {
@@ -33,6 +34,21 @@ export const authOptions: NextAuthOptions = {
         const u = user as unknown as { rol: Rol; organizacionId: string | null }
         token.rol = u.rol
         token.organizacionId = u.organizacionId
+      } else if (token.organizacionId === undefined && token.sub) {
+        // Backfill for JWTs issued before organizacionId existed on the
+        // token schema. `jwt()` only runs the `if (user)` branch above at
+        // sign-in — an already-issued token otherwise keeps whatever it
+        // was encoded with (NextAuth's default session.maxAge is 30 days),
+        // so without this fallback an already-logged-in cliente would 404
+        // every /cliente/* page (and 403 the download endpoint) until they
+        // manually re-authenticate. `=== undefined` (not falsy) is
+        // deliberate: a `null` organizacionId is legitimate for
+        // medico/backoffice and must not trigger a lookup on every request.
+        const usuario = await prisma.usuario.findUnique({ where: { id: token.sub } })
+        if (usuario) {
+          token.rol = usuario.rol
+          token.organizacionId = usuario.organizacionId
+        }
       }
       return token
     },
