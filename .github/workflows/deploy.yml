@@ -16,7 +16,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            ENV_FILE="${{ secrets.PROJECT_DIR }}/.env.local"
+            ENV_FILE="${{ secrets.PROJECT_DIR }}/.env"
             cat > "$ENV_FILE" <<EOF
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
