@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config'
+import { configDefaults, defineConfig } from 'vitest/config'
 import { loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
@@ -14,6 +14,10 @@ export default defineConfig(({ mode }) => {
       environment: 'jsdom',
       setupFiles: ['./vitest.setup.ts'],
       globals: true,
+      // Exclude git worktrees (superpowers:using-git-worktrees creates them
+      // under .worktrees/) — otherwise running tests from the main checkout
+      // while a worktree exists double-runs every test file it contains.
+      exclude: [...configDefaults.exclude, '**/.worktrees/**'],
     },
     resolve: {
       alias: { '@': path.resolve(__dirname, '.') },
