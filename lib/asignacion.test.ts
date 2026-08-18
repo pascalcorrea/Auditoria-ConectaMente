@@ -3,55 +3,48 @@ import { asignarMedico } from './asignacion'
 
 describe('asignarMedico', () => {
   const ids: { organizacionId?: string; medicoIds: string[]; casoIds: string[] } = { medicoIds: [], casoIds: [] }
+  let preexistingMedicoIds: string[] = []
 
   beforeEach(async () => {
-    // Clear all test data to ensure clean state before each test
-    ids.medicoIds = []
-    ids.casoIds = []
-    ids.organizacionId = undefined
-
-    // Clean up any leftover médicos and cases from previous test runs
-    try {
-      // Delete using raw SQL to bypass any caching issues and handle cascading dependencies
-      await prisma.$executeRawUnsafe(`DELETE FROM "LogDescarga" WHERE "informeId" IN (SELECT id FROM "Informe" WHERE "casoId" IN (SELECT id FROM "Caso" WHERE "nombreEvaluado" = $1))`, ['Evaluado Test'])
-      await prisma.$executeRawUnsafe(`DELETE FROM "Informe" WHERE "casoId" IN (SELECT id FROM "Caso" WHERE "nombreEvaluado" = $1)`, ['Evaluado Test'])
-      await prisma.$executeRawUnsafe(`DELETE FROM "Sesion" WHERE "casoId" IN (SELECT id FROM "Caso" WHERE "nombreEvaluado" = $1)`, ['Evaluado Test'])
-      await prisma.$executeRawUnsafe(`DELETE FROM "Caso" WHERE "nombreEvaluado" = $1`, ['Evaluado Test'])
-      await prisma.$executeRawUnsafe(`DELETE FROM "Usuario" WHERE "email" ILIKE $1`, ['%@example.com%'])
-      await prisma.$executeRawUnsafe(`DELETE FROM "Organizacion" WHERE "nombre" ILIKE $1`, ['Test Org Asignacion%'])
-    } catch (error) {
-      // Log but don't fail on cleanup errors
-      console.error('Cleanup error:', error instanceof Error ? error.message : error)
+    // This project's local dev database is shared across worktrees/sessions
+    // (not reset per test run), so médicos seeded in an earlier phase
+    // (e.g. medico1@conectamente.cl) are always present. Temporarily
+    // deactivate every pre-existing médico so asignarMedico() only ever
+    // sees the médicos each test creates for itself — restored in afterEach.
+    const preexisting = await prisma.usuario.findMany({
+      where: { rol: 'medico', activo: true },
+      select: { id: true },
+    })
+    preexistingMedicoIds = preexisting.map((m) => m.id)
+    if (preexistingMedicoIds.length > 0) {
+      await prisma.usuario.updateMany({
+        where: { id: { in: preexistingMedicoIds } },
+        data: { activo: false },
+      })
     }
   })
 
   afterEach(async () => {
-    try {
-      // Delete cases by organizacionId to catch any orphaned cases
-      if (ids.organizacionId) {
-        await prisma.caso.deleteMany({ where: { organizacionId: ids.organizacionId } })
-      }
-
-      // Delete all específic casos we tracked
-      if (ids.casoIds.length > 0) {
-        await prisma.caso.deleteMany({ where: { id: { in: ids.casoIds } } })
-      }
-
-      // Delete specific médicos we tracked
-      if (ids.medicoIds.length > 0) {
-        await prisma.usuario.deleteMany({ where: { id: { in: ids.medicoIds } } })
-      }
-
-      // Delete organizacion last
-      if (ids.organizacionId) {
-        await prisma.organizacion.delete({ where: { id: ids.organizacionId } })
-      }
-    } finally {
-      // Always reset our tracking
-      ids.casoIds = []
-      ids.medicoIds = []
-      ids.organizacionId = undefined
+    if (ids.casoIds.length > 0) {
+      await prisma.caso.deleteMany({ where: { id: { in: ids.casoIds } } })
     }
+    if (ids.medicoIds.length > 0) {
+      await prisma.usuario.deleteMany({ where: { id: { in: ids.medicoIds } } })
+    }
+    if (ids.organizacionId) {
+      await prisma.organizacion.delete({ where: { id: ids.organizacionId } })
+    }
+    ids.casoIds = []
+    ids.medicoIds = []
+    ids.organizacionId = undefined
+
+    if (preexistingMedicoIds.length > 0) {
+      await prisma.usuario.updateMany({
+        where: { id: { in: preexistingMedicoIds } },
+        data: { activo: true },
+      })
+    }
+    preexistingMedicoIds = []
   })
 
   afterAll(async () => {
