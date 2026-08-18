@@ -36,6 +36,7 @@ jobs:
             git reset --hard origin/main || exit 1
             git clean -fd
             npm install --production=false || exit 1
+            npx prisma generate || exit 1
             npx prisma migrate deploy || exit 1
             npm run build || exit 1
             pm2 startOrRestart ecosystem.config.js || exit 1
