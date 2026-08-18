@@ -48,6 +48,15 @@ export const authOptions: NextAuthOptions = {
         if (usuario) {
           token.rol = usuario.rol
           token.organizacionId = usuario.organizacionId
+        } else {
+          // token.sub doesn't resolve to any Usuario (deleted/never
+          // existed). Without this, organizacionId would stay `undefined`
+          // forever and this branch would re-query the DB on every single
+          // request for the rest of the token's lifetime (up to 30 days).
+          // Setting it to null marks the lookup as "done, nothing found" —
+          // matches the legitimate no-org shape, and route-level guards
+          // (`!session.user.organizacionId`) still correctly deny access.
+          token.organizacionId = null
         }
       }
       return token

@@ -51,8 +51,13 @@ describe('authOptions jwt callback backfills organizacionId for pre-existing tok
     const jwtCallback = authOptions.callbacks!.jwt!
     // organizacionId: null here means "already resolved, no org" (medico/
     // backoffice) — must be left alone, not treated as needing backfill.
+    // Asserted via a spy, not by using a nonexistent token.sub: a lookup on
+    // a bogus id would just return null without throwing, so that approach
+    // wouldn't actually prove the guard skipped the query — it would pass
+    // even if the `=== undefined` check regressed to `!token.organizacionId`.
+    const spy = vi.spyOn(prisma.usuario, 'findUnique')
     const token = {
-      sub: 'does-not-exist-would-throw-if-queried',
+      sub: usuarioId,
       rol: 'backoffice',
       organizacionId: null,
     } as Parameters<typeof jwtCallback>[0]['token']
@@ -61,6 +66,25 @@ describe('authOptions jwt callback backfills organizacionId for pre-existing tok
 
     expect(result.organizacionId).toBeNull()
     expect(result.rol).toBe('backoffice')
+    expect(spy).not.toHaveBeenCalled()
+    spy.mockRestore()
+  })
+
+  it('sets organizacionId to null (not left undefined) when token.sub matches no Usuario, so the lookup does not repeat on every subsequent request', async () => {
+    const jwtCallback = authOptions.callbacks!.jwt!
+    const token = {
+      sub: 'does-not-exist-in-the-db',
+      rol: 'cliente',
+    } as Parameters<typeof jwtCallback>[0]['token']
+
+    const result = await jwtCallback({ token, user: undefined } as unknown as Parameters<typeof jwtCallback>[0])
+
+    expect(result.organizacionId).toBeNull()
+
+    const spy = vi.spyOn(prisma.usuario, 'findUnique')
+    await jwtCallback({ token: result, user: undefined } as unknown as Parameters<typeof jwtCallback>[0])
+    expect(spy).not.toHaveBeenCalled()
+    spy.mockRestore()
   })
 })
 

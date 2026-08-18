@@ -16,6 +16,16 @@ const DEFAULT_ROUTE_BY_ROL: Record<string, string> = {
   medico: '/medico',
 }
 
+// callbackUrl comes straight from the query string — an attacker-controlled
+// value. NextAuth's own redirect() callback would normally reject a
+// cross-origin target, but this form calls signIn(..., { redirect: false })
+// and navigates by hand, which bypasses that check entirely. Only accept a
+// same-origin path: must start with a single '/', never '//' (protocol-
+// relative, e.g. //evil.com) or an absolute URL (e.g. https://evil.com).
+function esCallbackUrlSegura(url: string): boolean {
+  return /^\/(?!\/)/.test(url)
+}
+
 export function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -46,8 +56,9 @@ export function LoginForm() {
     // role, since /admin (the old hardcoded fallback) 404s any non-
     // backoffice user out through middleware.ts and back to /login in an
     // unbreakable loop.
-    if (searchParams.get('callbackUrl')) {
-      router.push(searchParams.get('callbackUrl')!)
+    const callbackUrl = searchParams.get('callbackUrl')
+    if (callbackUrl && esCallbackUrlSegura(callbackUrl)) {
+      router.push(callbackUrl)
       return
     }
 

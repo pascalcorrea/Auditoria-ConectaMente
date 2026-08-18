@@ -78,4 +78,28 @@ describe('LoginForm post-login redirect', () => {
     await waitFor(() => expect(screen.getByText('Email o contraseña incorrectos')).toBeInTheDocument())
     expect(push).not.toHaveBeenCalled()
   })
+
+  it('rejects an absolute-URL callbackUrl (open redirect) and falls back to the role default', async () => {
+    mockedUseSearchParams.mockReturnValue({ get: (key: string) => (key === 'callbackUrl' ? 'https://evil.com' : null) })
+    mockedSignIn.mockResolvedValue({ error: null })
+    mockedGetSession.mockResolvedValue({ user: { rol: 'cliente' } })
+
+    render(<LoginForm />)
+    fillAndSubmit()
+
+    await waitFor(() => expect(push).toHaveBeenCalledWith('/cliente/casos'))
+    expect(push).not.toHaveBeenCalledWith('https://evil.com')
+  })
+
+  it('rejects a protocol-relative callbackUrl (open redirect) and falls back to the role default', async () => {
+    mockedUseSearchParams.mockReturnValue({ get: (key: string) => (key === 'callbackUrl' ? '//evil.com' : null) })
+    mockedSignIn.mockResolvedValue({ error: null })
+    mockedGetSession.mockResolvedValue({ user: { rol: 'cliente' } })
+
+    render(<LoginForm />)
+    fillAndSubmit()
+
+    await waitFor(() => expect(push).toHaveBeenCalledWith('/cliente/casos'))
+    expect(push).not.toHaveBeenCalledWith('//evil.com')
+  })
 })
