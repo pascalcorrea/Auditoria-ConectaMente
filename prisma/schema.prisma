@@ -13,14 +13,134 @@ enum Rol {
   backoffice
 }
 
+enum TipoOrganizacion {
+  isapre
+  compin
+  empresa
+  seguro
+  subcontratista
+}
+
+enum EstadoCaso {
+  recibido
+  en_revision
+  informe_en_validacion
+  entregado
+}
+
+enum PrioridadCaso {
+  normal
+  urgente
+}
+
+enum EstadoSesion {
+  agendada
+  en_curso
+  realizada
+  incumplida_medico
+  incumplida_evaluado
+  reprogramada
+  cancelada
+}
+
+enum FirmaProveedor {
+  firmaweb
+  sovos
+  otro
+}
+
 model Usuario {
-  id           String   @id @default(cuid())
-  nombre       String
-  email        String   @unique
-  passwordHash String
-  rol          Rol
-  activo       Boolean  @default(true)
-  creadoEn     DateTime @default(now())
+  id             String   @id @default(cuid())
+  nombre         String
+  email          String   @unique
+  passwordHash   String
+  rol            Rol
+  activo         Boolean  @default(true)
+  creadoEn       DateTime @default(now())
+  organizacionId String?
+  especialidad   String?
+
+  organizacion      Organizacion? @relation(fields: [organizacionId], references: [id], onDelete: Restrict)
+  casosAsignados    Caso[]        @relation("CasoMedico")
+  informesGenerados Informe[]     @relation("InformeGeneradoPor")
+  descargas         LogDescarga[]
 
   @@index([email])
+  @@index([organizacionId])
+}
+
+model Organizacion {
+  id           String           @id @default(cuid())
+  nombre       String
+  tipo         TipoOrganizacion
+  plazoSlaDias Int
+  creadoEn     DateTime         @default(now())
+
+  usuarios Usuario[]
+  casos    Caso[]
+}
+
+model Caso {
+  id             String        @id @default(cuid())
+  organizacionId String
+  medicoId       String?
+  estado         EstadoCaso    @default(recibido)
+  tipoLicencia   String
+  fechaIngreso   DateTime
+  fechaLimite    DateTime
+  prioridad      PrioridadCaso @default(normal)
+  creadoEn       DateTime      @default(now())
+  actualizadoEn  DateTime      @updatedAt
+
+  organizacion Organizacion @relation(fields: [organizacionId], references: [id], onDelete: Restrict)
+  medico       Usuario?     @relation("CasoMedico", fields: [medicoId], references: [id], onDelete: Restrict)
+  sesion       Sesion?
+  informe      Informe?
+
+  @@index([fechaLimite])
+  @@index([organizacionId])
+  @@index([estado])
+}
+
+model Sesion {
+  id                       String       @id @default(cuid())
+  casoId                   String       @unique
+  fechaProgramada          DateTime
+  dailyRoomUrl             String?
+  estado                   EstadoSesion @default(agendada)
+  consentimientoTimestamp  DateTime?
+  grabacionUrl             String?
+  medicoHoraConexion       DateTime?
+  medicoHoraDesconexion    DateTime?
+  evaluadoHoraConexion     DateTime?
+  evaluadoHoraDesconexion  DateTime?
+  duracionEfectivaSegundos Int?
+
+  caso Caso @relation(fields: [casoId], references: [id], onDelete: Restrict)
+}
+
+model Informe {
+  id                String         @id @default(cuid())
+  casoId            String         @unique
+  archivoUrl        String
+  generadoEn        DateTime       @default(now())
+  generadoPor       String
+  firmaProveedor    FirmaProveedor
+  firmaTimestamp    DateTime?
+  firmaDocumentoId  String?
+  archivoFirmadoUrl String?
+
+  caso      Caso          @relation(fields: [casoId], references: [id], onDelete: Restrict)
+  medico    Usuario       @relation("InformeGeneradoPor", fields: [generadoPor], references: [id], onDelete: Restrict)
+  descargas LogDescarga[]
+}
+
+model LogDescarga {
+  id        String   @id @default(cuid())
+  informeId String
+  usuarioId String
+  timestamp DateTime @default(now())
+
+  informe Informe @relation(fields: [informeId], references: [id], onDelete: Restrict)
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
 }
