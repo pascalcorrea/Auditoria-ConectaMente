@@ -91,6 +91,72 @@ async function main() {
     },
   })
 
+  const medico1 = await prisma.usuario.findUniqueOrThrow({ where: { email: 'medico1@conectamente.cl' } })
+  const medico2 = await prisma.usuario.findUniqueOrThrow({ where: { email: 'medico2@conectamente.cl' } })
+
+  const casoIsapre = await prisma.caso.upsert({
+    where: { id: 'seed-caso-isapre-entregado' },
+    update: {},
+    create: {
+      id: 'seed-caso-isapre-entregado',
+      organizacionId: isapre.id,
+      medicoId: medico1.id,
+      rutEvaluado: '12345678-5',
+      nombreEvaluado: 'Evaluado Isapre Demo',
+      estado: 'entregado',
+      tipoLicencia: 'licencia comun',
+      fechaEmisionLicencia: new Date('2026-07-01'),
+      fechaIngreso: new Date('2026-07-05'),
+      fechaLimite: new Date('2026-07-15'),
+      prioridad: 'normal',
+    },
+  })
+
+  await prisma.informe.upsert({
+    where: { casoId: casoIsapre.id },
+    update: {},
+    create: {
+      casoId: casoIsapre.id,
+      archivoUrl: 'https://example.com/informe-demo-isapre-borrador.pdf',
+      archivoFirmadoUrl: 'https://example.com/informe-demo-isapre-firmado.pdf',
+      generadoPor: medico1.id,
+      firmaProveedor: 'firmaweb',
+      firmaTimestamp: new Date('2026-07-14'),
+    },
+  })
+
+  const casoEmpresa = await prisma.caso.upsert({
+    where: { id: 'seed-caso-empresa-entregado' },
+    update: {},
+    create: {
+      id: 'seed-caso-empresa-entregado',
+      organizacionId: empresa.id,
+      medicoId: medico2.id,
+      rutEvaluado: '40000000-K',
+      nombreEvaluado: 'Evaluado Empresa Demo',
+      estado: 'entregado',
+      tipoLicencia: 'licencia comun',
+      fechaEmisionLicencia: new Date('2026-07-01'),
+      fechaIngreso: new Date('2026-07-05'),
+      fechaLimite: new Date('2026-07-20'),
+      prioridad: 'urgente',
+    },
+  })
+
+  await prisma.informe.upsert({
+    where: { casoId: casoEmpresa.id },
+    update: {},
+    create: {
+      casoId: casoEmpresa.id,
+      archivoUrl: 'https://example.com/informe-demo-empresa-borrador.pdf',
+      archivoFirmadoUrl: 'https://example.com/informe-demo-empresa-firmado.pdf',
+      generadoPor: medico2.id,
+      firmaProveedor: 'sovos',
+      firmaTimestamp: new Date('2026-07-19'),
+    },
+  })
+
+  console.log('Seeded 1 caso entregado + informe por organización (isapre, empresa)')
   console.log('Seeded backoffice@conectamente.cl / ChangeMe123!')
   console.log('Seeded medico1@conectamente.cl, medico2@conectamente.cl / ChangeMe123!')
   console.log('Seeded cliente-isapre@conectamente.cl, cliente-empresa@conectamente.cl / ChangeMe123!')

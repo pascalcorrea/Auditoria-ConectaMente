@@ -1,11 +1,30 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { signIn, getSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
+
+// /medico doesn't exist yet (Fase 3) — a médico landing here would hit a
+// 404, same as visiting any other not-yet-built route. Not this task's
+// scope to fix; /admin and /cliente are the two portals that exist today.
+const DEFAULT_ROUTE_BY_ROL: Record<string, string> = {
+  backoffice: '/admin',
+  cliente: '/cliente/casos',
+  medico: '/medico',
+}
+
+// callbackUrl comes straight from the query string — an attacker-controlled
+// value. NextAuth's own redirect() callback would normally reject a
+// cross-origin target, but this form calls signIn(..., { redirect: false })
+// and navigates by hand, which bypasses that check entirely. Only accept a
+// same-origin path: must start with a single '/', never '//' (protocol-
+// relative, e.g. //evil.com) or an absolute URL (e.g. https://evil.com).
+function esCallbackUrlSegura(url: string): boolean {
+  return /^\/(?!\/)/.test(url)
+}
 
 export function LoginForm() {
   const router = useRouter()
@@ -26,16 +45,27 @@ export function LoginForm() {
       redirect: false,
     })
 
-    setLoading(false)
-
     if (result?.error) {
+      setLoading(false)
       setError('Email o contraseña incorrectos')
       return
     }
 
-    // '/admin' is the fallback (not '/') because it's the only portal
-    // actually built so far — /cliente and /medico don't exist yet.
-    router.push(searchParams.get('callbackUrl') ?? '/admin')
+    // No callbackUrl means the user landed on /login directly (not bounced
+    // here from a protected route) — route them to their own portal by
+    // role, since /admin (the old hardcoded fallback) 404s any non-
+    // backoffice user out through middleware.ts and back to /login in an
+    // unbreakable loop.
+    const callbackUrl = searchParams.get('callbackUrl')
+    if (callbackUrl && esCallbackUrlSegura(callbackUrl)) {
+      router.push(callbackUrl)
+      return
+    }
+
+    const session = await getSession()
+    const destino = (session?.user?.rol && DEFAULT_ROUTE_BY_ROL[session.user.rol]) ?? '/login'
+    setLoading(false)
+    router.push(destino)
   }
 
   return (

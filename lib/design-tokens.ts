@@ -11,6 +11,15 @@ export const colors = {
     border: 'rgba(15, 23, 42, 0.10)',
     borderSoft: 'rgba(15, 23, 42, 0.07)',
     danger: '#EF4444',
+    dangerSoft: '#FEF2F2',
+    // Semantic badge palette — matches ConectaMente's STATUS_COLOR
+    // convention (E:\Dev\ConectaMente-2's AdminDashboard.tsx): índigo for
+    // neutral/in-progress states, gray for inactive, red for
+    // negative/cancelled, green (accent) for positive/completed.
+    neutral: '#6366F1',
+    neutralSoft: '#EEEDFF',
+    inactive: '#6B7280',
+    inactiveSoft: '#F3F4F6',
   },
 } as const
 
