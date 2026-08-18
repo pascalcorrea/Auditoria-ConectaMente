@@ -17,17 +17,30 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) return null
         const usuario = await verifyCredentials(credentials.email, credentials.password)
         if (!usuario) return null
-        return { id: usuario.id, name: usuario.nombre, email: usuario.email, rol: usuario.rol }
+        return {
+          id: usuario.id,
+          name: usuario.nombre,
+          email: usuario.email,
+          rol: usuario.rol,
+          organizacionId: usuario.organizacionId,
+        }
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.rol = (user as unknown as { rol: Rol }).rol
+      if (user) {
+        const u = user as unknown as { rol: Rol; organizacionId: string | null }
+        token.rol = u.rol
+        token.organizacionId = u.organizacionId
+      }
       return token
     },
     async session({ session, token }) {
-      if (session.user) session.user.rol = token.rol
+      if (session.user) {
+        session.user.rol = token.rol
+        session.user.organizacionId = token.organizacionId
+      }
       return session
     },
   },
