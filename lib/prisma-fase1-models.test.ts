@@ -11,7 +11,9 @@ describe('Fase 1 models', () => {
 
   afterAll(async () => {
     if (ids.casoId) {
-      await prisma.logDescarga.deleteMany({ where: { informeId: ids.informeId } })
+      if (ids.informeId) {
+        await prisma.logDescarga.deleteMany({ where: { informeId: ids.informeId } })
+      }
       await prisma.informe.deleteMany({ where: { casoId: ids.casoId } })
       await prisma.sesion.deleteMany({ where: { casoId: ids.casoId } })
       await prisma.caso.delete({ where: { id: ids.casoId } })
@@ -118,5 +120,33 @@ describe('Fase 1 models', () => {
         },
       })
     ).rejects.toThrow()
+  })
+
+  it('rejects deleting an Organizacion that still has a Caso referencing it', async () => {
+    const organizacion = await prisma.organizacion.create({
+      data: {
+        nombre: `Test Org Restrict ${Date.now()}`,
+        tipo: 'empresa',
+        plazoSlaDias: 10,
+      },
+    })
+
+    const caso = await prisma.caso.create({
+      data: {
+        organizacionId: organizacion.id,
+        estado: 'recibido',
+        tipoLicencia: 'licencia comun',
+        fechaIngreso: new Date(),
+        fechaLimite: new Date(),
+        prioridad: 'normal',
+      },
+    })
+
+    await expect(
+      prisma.organizacion.delete({ where: { id: organizacion.id } })
+    ).rejects.toThrow()
+
+    await prisma.caso.delete({ where: { id: caso.id } })
+    await prisma.organizacion.delete({ where: { id: organizacion.id } })
   })
 })
