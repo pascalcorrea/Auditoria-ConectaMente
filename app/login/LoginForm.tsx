@@ -33,7 +33,9 @@ export function LoginForm() {
       return
     }
 
-    router.push(searchParams.get('callbackUrl') ?? '/')
+    // '/admin' is the fallback (not '/') because it's the only portal
+    // actually built so far — /cliente and /medico don't exist yet.
+    router.push(searchParams.get('callbackUrl') ?? '/admin')
   }
 
   return (
