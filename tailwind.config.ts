@@ -1,11 +1,13 @@
 import type { Config } from 'tailwindcss'
+import { colors, fontFamily } from './lib/design-tokens'
 
 const config: Config = {
-  content: [
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
-  ],
+  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      colors,
+      fontFamily,
+    },
   },
   plugins: [],
 }
