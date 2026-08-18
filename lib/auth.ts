@@ -38,6 +38,12 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
+        // NextAuth's JWT strategy sets token.sub = user.id automatically on
+        // sign-in — session.user.id was declared in types/next-auth.d.ts but
+        // never actually assigned anywhere, so it was always undefined. This
+        // broke every route (like the cliente download endpoint) that reads
+        // session.user.id, for every user, regardless of role.
+        session.user.id = token.sub
         session.user.rol = token.rol
         session.user.organizacionId = token.organizacionId
       }
