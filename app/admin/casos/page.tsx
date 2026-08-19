@@ -1,13 +1,8 @@
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { TopHeader } from '@/components/layout/TopHeader'
 import { EstadoBadge, PrioridadBadge } from '@/components/ui/StatusBadge'
 import { ESTADOS_ACTIVOS } from '@/lib/asignacion'
 
-// Without a dynamic API, Next.js prerenders this page at build time (it
-// only queries Prisma, which Next can't detect) — freezing the case list
-// to whatever existed when `next build` ran. Force per-request rendering
-// so newly created/reassigned casos actually show up.
 export const dynamic = 'force-dynamic'
 
 export default async function CasosPage() {
@@ -28,9 +23,7 @@ export default async function CasosPage() {
   ]
 
   return (
-    <>
-      <TopHeader title="Casos" badge={`${casos.length} casos`} />
-      <div className="flex-1 overflow-auto p-7">
+    <div className="flex-1 overflow-auto p-7">
         <div className="mb-5 flex items-center justify-between">
           <div className="flex gap-4">
             {kpis.map((k) => (
@@ -90,6 +83,5 @@ export default async function CasosPage() {
           ))}
         </div>
       </div>
-    </>
-  )
-}
+    )
+  }
