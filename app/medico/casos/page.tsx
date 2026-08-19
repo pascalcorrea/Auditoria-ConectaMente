@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { authOptions } from '@/lib/auth'
 import { listarCasosMedico } from '@/lib/medico-casos'
+import { Button } from '@/components/ui/Button'
 
 export const dynamic = 'force-dynamic'
 

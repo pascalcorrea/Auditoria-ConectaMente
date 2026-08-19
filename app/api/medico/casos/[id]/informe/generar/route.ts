@@ -14,7 +14,7 @@ export async function POST(
 
   const { id } = await params
   const formData = await request.formData()
-  // formData.get('contenido') as string
+  const contenido = formData.get('contenido') as string
 
   const caso = await prisma.caso.findUnique({ where: { id } })
   if (!caso || caso.medicoId !== session.user.id) {

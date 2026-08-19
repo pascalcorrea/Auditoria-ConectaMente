@@ -33,7 +33,7 @@ describe('authOptions jwt callback backfills organizacionId for pre-existing tok
   afterAll(async () => {
     try {
       await prisma.usuario.delete({ where: { id: usuarioId } })
-    } catch {
+    } catch (e) {
       // Cleanup if test changes — ignore cascade errors
     }
     await prisma.$disconnect()
