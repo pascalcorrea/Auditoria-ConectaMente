@@ -86,3 +86,27 @@ export const ESTADO_ENVIO_LABEL: Record<EstadoEnvio, string> = {
 }
 
 export { TONO_CLASSES }
+
+import type { EstadoPago, EstadoFactura } from '@prisma/client'
+
+export const ESTADO_PAGO_TONO: Record<EstadoPago, Tono> = {
+  pendiente: 'neutral',
+  pagado: 'positivo',
+}
+
+export const ESTADO_PAGO_LABEL: Record<EstadoPago, string> = {
+  pendiente: 'Pendiente',
+  pagado: 'Pagado',
+}
+
+export const ESTADO_FACTURA_TONO: Record<EstadoFactura, Tono> = {
+  pendiente: 'neutral',
+  facturada: 'neutral',
+  pagada: 'positivo',
+}
+
+export const ESTADO_FACTURA_LABEL: Record<EstadoFactura, string> = {
+  pendiente: 'Pendiente',
+  facturada: 'Facturada',
+  pagada: 'Pagada',
+}

@@ -89,6 +89,15 @@ function IconComunicaciones({ c }: { c: string }) {
   )
 }
 
+function IconFinanzas({ c }: { c: string }) {
+  return (
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 6v6m-3-3h6" />
+    </svg>
+  )
+}
+
 function IconToggle({ expanded }: { expanded: boolean }) {
   return (
     <svg
@@ -115,6 +124,12 @@ const CATEGORIES = [
       { href: '/admin/asignacion', label: 'Asignación', Icon: IconAssignment },
       { href: '/admin/comunicaciones', label: 'Comunicaciones', Icon: IconComunicaciones },
       { href: '/admin/cumplimiento', label: 'Cumplimiento', Icon: IconCompliance },
+    ],
+  },
+  {
+    label: 'Finanzas',
+    tabs: [
+      { href: '/admin/contable/pagos-medicos', label: 'Contabilidad', Icon: IconFinanzas },
     ],
   },
   {
