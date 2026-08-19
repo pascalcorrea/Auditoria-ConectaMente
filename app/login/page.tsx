@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { LoginForm } from './LoginForm'
 
 export const metadata = { title: 'Acceso — ConectaMente Core' }
+export const dynamic = 'force-dynamic'
 
 export default function LoginPage() {
   return (
