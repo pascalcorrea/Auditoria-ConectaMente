@@ -14,6 +14,14 @@ const NAV: NavSection[] = [
     section: 'Equipo',
     items: [{ href: '/admin/asignacion', label: 'Asignación' }],
   },
+  {
+    section: 'Admin',
+    items: [
+      { href: '/admin/analytics', label: 'Analytics' },
+      { href: '/admin/usuarios', label: 'Usuarios' },
+      { href: '/admin/organizaciones', label: 'Organizaciones' },
+    ],
+  },
 ]
 
 export default function AdminLayout({ children }: { children: ReactNode }) {

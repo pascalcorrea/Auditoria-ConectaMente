@@ -1,0 +1,63 @@
+import { prisma } from './prisma'
+
+export async function getAnalyticsMetrics() {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const [totalCasos, casosEntregados, casosEnProgreso, casosVencidos, cargaMedicos, casosEntregadosPorFechas] = await Promise.all([
+    prisma.caso.count(),
+    prisma.caso.count({ where: { estado: 'entregado' } }),
+    prisma.caso.count({ where: { estado: { in: ['en_revision', 'informe_en_validacion'] } } }),
+    prisma.caso.count({
+      where: {
+        AND: [{ fechaLimite: { lt: today } }, { estado: { not: 'entregado' } }],
+      },
+    }),
+    prisma.usuario.findMany({
+      where: { rol: 'medico' },
+      select: {
+        id: true,
+        nombre: true,
+        casosAsignados: {
+          select: { id: true, estado: true },
+        },
+      },
+    }),
+    prisma.caso.findMany({
+      where: { estado: 'entregado' },
+      select: { fechaIngreso: true, actualizadoEn: true },
+    }),
+  ])
+
+  const tiempoPromedio =
+    casosEntregadosPorFechas.length > 0
+      ? casosEntregadosPorFechas.reduce((sum, caso) => {
+          const end = caso.actualizadoEn || new Date()
+          const days = (end.getTime() - caso.fechaIngreso.getTime()) / (1000 * 60 * 60 * 24)
+          return sum + days
+        }, 0) / casosEntregadosPorFechas.length
+      : null
+
+  const cargaMedicosFormattedWithStats = cargaMedicos.map((medico) => {
+    const casosAsignados = medico.casosAsignados.length
+    const casosEntregados = medico.casosAsignados.filter((c) => c.estado === 'entregado').length
+    const porcentajeCompletado = casosAsignados > 0 ? Math.round((casosEntregados / casosAsignados) * 100) : 0
+
+    return {
+      usuarioId: medico.id,
+      nombre: medico.nombre,
+      casosAsignados,
+      casosCompletados: casosEntregados,
+      porcentajeCompletado,
+    }
+  })
+
+  return {
+    totalCasos,
+    casosCompletados: casosEntregados,
+    casosEnProgreso,
+    casosVencidos,
+    tiempoPromedio: tiempoPromedio ? Math.round(tiempoPromedio * 10) / 10 : null,
+    cargaMedicos: cargaMedicosFormattedWithStats.sort((a, b) => b.casosAsignados - a.casosAsignados),
+  }
+}
