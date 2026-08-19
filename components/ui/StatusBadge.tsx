@@ -68,3 +68,21 @@ export function EstadoBadge({ estado }: { estado: EstadoCaso }) {
 export function PrioridadBadge({ prioridad }: { prioridad: PrioridadCaso }) {
   return <Badge tono={PRIORIDAD_TONO[prioridad]} label={PRIORIDAD_LABEL[prioridad]} />
 }
+
+import type { EstadoEnvio } from '@prisma/client'
+
+export const ESTADO_ENVIO_TONO: Record<EstadoEnvio, Tono> = {
+  enviado: 'neutral',
+  entregado: 'positivo',
+  leido: 'positivo',
+  fallido: 'negativo',
+}
+
+export const ESTADO_ENVIO_LABEL: Record<EstadoEnvio, string> = {
+  enviado: 'Enviado',
+  entregado: 'Entregado',
+  leido: 'Leído',
+  fallido: 'Fallido',
+}
+
+export { TONO_CLASSES }

@@ -81,6 +81,14 @@ function IconCompliance({ c }: { c: string }) {
   )
 }
 
+function IconComunicaciones({ c }: { c: string }) {
+  return (
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+    </svg>
+  )
+}
+
 function IconToggle({ expanded }: { expanded: boolean }) {
   return (
     <svg
@@ -105,6 +113,7 @@ const CATEGORIES = [
     tabs: [
       { href: '/admin/casos', label: 'Casos', Icon: IconCases },
       { href: '/admin/asignacion', label: 'Asignación', Icon: IconAssignment },
+      { href: '/admin/comunicaciones', label: 'Comunicaciones', Icon: IconComunicaciones },
       { href: '/admin/cumplimiento', label: 'Cumplimiento', Icon: IconCompliance },
     ],
   },
