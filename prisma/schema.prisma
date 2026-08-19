@@ -49,6 +49,18 @@ enum FirmaProveedor {
   otro
 }
 
+enum CanalEnvio {
+  whatsapp
+  email
+}
+
+enum EstadoEnvio {
+  enviado
+  entregado
+  leido
+  fallido
+}
+
 model Usuario {
   id             String   @id @default(cuid())
   nombre         String
@@ -64,6 +76,8 @@ model Usuario {
   casosAsignados    Caso[]        @relation("CasoMedico")
   informesGenerados Informe[]     @relation("InformeGeneradoPor")
   descargas         LogDescarga[]
+  logsRecibidos     LogEnvio[]    @relation("LogEnvioDestinatario")
+  logsEnviados      LogEnvio[]    @relation("LogEnvioEnviadoPor")
 
   @@index([email])
   @@index([organizacionId])
@@ -99,6 +113,7 @@ model Caso {
   medico       Usuario?     @relation("CasoMedico", fields: [medicoId], references: [id], onDelete: Restrict)
   sesion       Sesion?
   informe      Informe?
+  logsEnvio    LogEnvio[]
 
   @@index([fechaLimite])
   @@index([organizacionId])
@@ -146,4 +161,27 @@ model LogDescarga {
 
   informe Informe @relation(fields: [informeId], references: [id], onDelete: Restrict)
   usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+}
+
+model LogEnvio {
+  id                    String      @id @default(cuid())
+  canal                 CanalEnvio
+  tipo                  String      // nombre de plantilla WA, o "manual" para email
+  destino               String      // teléfono normalizado o email, desnormalizado
+  destinatarioUsuarioId String?
+  casoId                String?
+  asunto                String?     // solo email
+  cuerpo                String?     // solo email o texto libre WA
+  estado                EstadoEnvio @default(enviado)
+  error                 String?
+  enviadoPorId          String
+  creadoEn              DateTime    @default(now())
+
+  destinatario Usuario? @relation("LogEnvioDestinatario", fields: [destinatarioUsuarioId], references: [id], onDelete: SetNull)
+  caso         Caso?    @relation(fields: [casoId], references: [id], onDelete: SetNull)
+  enviadoPor   Usuario  @relation("LogEnvioEnviadoPor", fields: [enviadoPorId], references: [id], onDelete: Restrict)
+
+  @@index([casoId])
+  @@index([destinatarioUsuarioId])
+  @@index([creadoEn])
 }
