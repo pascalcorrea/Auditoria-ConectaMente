@@ -70,11 +70,11 @@ export function LoginForm() {
     <Card className="w-full max-w-sm px-9 py-10">
       <div className="mx-auto mb-5 flex justify-center">
         <img
-          src="/logo.svg"
+          src="/logo.png"
           alt="ConectaMente"
-          width={60}
+          width={120}
           height={60}
-          className="h-15 w-15"
+          className="h-16 w-auto"
         />
       </div>
       <h1 className="mb-1 text-center text-lg font-semibold text-brand-text">ConectaMente Core</h1>
