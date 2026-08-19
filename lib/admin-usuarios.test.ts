@@ -1,0 +1,9 @@
+import { describe, it, expect } from 'vitest'
+import { listarUsuarios } from './admin-usuarios'
+
+describe('admin-usuarios', () => {
+  it('listarUsuarios returns array', async () => {
+    const usuarios = await listarUsuarios()
+    expect(Array.isArray(usuarios)).toBe(true)
+  })
+})
