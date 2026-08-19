@@ -69,9 +69,13 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-sm px-9 py-10">
+      <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-accent text-lg font-bold text-white">
+        CM
+      </div>
+      <h1 className="mb-1 text-center text-lg font-semibold text-brand-text">ConectaMente Core</h1>
+      <p className="mb-7 text-center text-sm text-brand-textSecondary">Plataforma de auditoría de licencias médicas</p>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <h1 className="text-lg font-medium text-brand-text">Acceso ConectaMente Core</h1>
         <Input
           label="Email"
           name="email"

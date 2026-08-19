@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { ESTADOS_ACTIVOS } from '@/lib/asignacion'
 import { ReasignarSelect } from './ReasignarSelect'
+import { TopHeader } from '@/components/layout/TopHeader'
 
 // See app/admin/casos/page.tsx for why this is needed — without it, Next
 // prerenders workload counts and the caso table at build time and they
@@ -14,14 +15,15 @@ export default async function AsignacionPage() {
   })
 
   const cargas = await Promise.all(
-    medicos.map(async (medico) => ({
-      id: medico.id,
-      nombre: medico.nombre,
-      carga: await prisma.caso.count({
+    medicos.map(async (medico) => {
+      const carga = await prisma.caso.count({
         where: { medicoId: medico.id, estado: { in: [...ESTADOS_ACTIVOS] } },
-      }),
-    }))
+      })
+      return { id: medico.id, nombre: medico.nombre, especialidad: medico.especialidad, carga }
+    })
   )
+
+  const cargaMaxima = Math.max(1, ...cargas.map((c) => c.carga))
 
   const casos = await prisma.caso.findMany({
     where: { estado: { in: [...ESTADOS_ACTIVOS] } },
@@ -30,43 +32,62 @@ export default async function AsignacionPage() {
   })
 
   return (
-    <div className="p-8">
-      <h1 className="text-lg font-medium text-brand-text">Asignación</h1>
+    <>
+      <TopHeader title="Asignación" />
+      <div className="flex-1 overflow-auto p-8">
+        <div className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-brand-textMuted">Carga por médico</div>
+        <div className="mb-8 flex gap-4">
+          {cargas.map((c) => (
+            <div
+              key={c.id}
+              className="flex-1 rounded-xl border border-brand-borderSoft bg-white p-[18px] shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.03)]"
+            >
+              <div className="mb-0.5 text-sm font-semibold text-brand-text">{c.nombre}</div>
+              <div className="mb-3 text-xs text-brand-textSecondary">{c.especialidad ?? 'Sin especialidad'}</div>
+              <div className="mb-1.5 flex justify-between text-xs text-brand-textSecondary">
+                <span>
+                  {c.carga} caso{c.carga === 1 ? '' : 's'} activo{c.carga === 1 ? '' : 's'}
+                </span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-brand-bgHover">
+                <div
+                  className="h-full rounded-full bg-brand-accent"
+                  style={{ width: `${(c.carga / cargaMaxima) * 100}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
 
-      <h2 className="mt-6 text-sm font-medium text-brand-textSecondary">Carga por médico</h2>
-      <ul className="mt-2 text-sm text-brand-text">
-        {cargas.map((c) => (
-          <li key={c.id}>
-            {c.nombre}: {c.carga} caso{c.carga === 1 ? '' : 's'} activo{c.carga === 1 ? '' : 's'}
-          </li>
-        ))}
-      </ul>
-
-      <h2 className="mt-6 text-sm font-medium text-brand-textSecondary">Casos</h2>
-      <table className="mt-2 w-full text-sm">
-        <thead>
-          <tr className="text-left text-xs uppercase tracking-wide text-brand-textSecondary">
-            <th className="pb-2">Evaluado</th>
-            <th className="pb-2">Organización</th>
-            <th className="pb-2">Médico</th>
-          </tr>
-        </thead>
-        <tbody>
+        <div className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-brand-textMuted">
+          Casos activos y reasignación
+        </div>
+        <div className="overflow-hidden rounded-xl border border-brand-borderSoft bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.03)]">
+          <div className="grid grid-cols-[1.8fr_1.6fr_1fr_1.6fr] bg-brand-bg px-5 py-2.5">
+            <div className="text-[10.5px] font-semibold uppercase tracking-wider text-brand-textSecondary">Evaluado</div>
+            <div className="text-[10.5px] font-semibold uppercase tracking-wider text-brand-textSecondary">Organización</div>
+            <div className="text-[10.5px] font-semibold uppercase tracking-wider text-brand-textSecondary">Plazo</div>
+            <div className="text-[10.5px] font-semibold uppercase tracking-wider text-brand-textSecondary">Asignar a</div>
+          </div>
+          {casos.length === 0 && (
+            <div className="px-5 py-16 text-center text-sm text-brand-textMuted">No hay casos activos por asignar.</div>
+          )}
           {casos.map((caso) => (
-            <tr key={caso.id} className="border-t border-brand-borderSoft">
-              <td className="py-2">{caso.nombreEvaluado}</td>
-              <td className="py-2">{caso.organizacion.nombre}</td>
-              <td className="py-2">
+            <div key={caso.id} className="grid grid-cols-[1.8fr_1.6fr_1fr_1.6fr] items-center border-t border-brand-borderSoft/70 px-5 py-3">
+              <div className="text-sm text-brand-text">{caso.nombreEvaluado}</div>
+              <div className="text-sm text-brand-textSecondary">{caso.organizacion.nombre}</div>
+              <div className="text-sm tabular-nums text-brand-textSecondary">{caso.fechaLimite.toLocaleDateString('es-CL')}</div>
+              <div>
                 <ReasignarSelect
                   casoId={caso.id}
                   medicoIdActual={caso.medicoId}
                   medicos={medicos.map((m) => ({ id: m.id, nombre: m.nombre }))}
                 />
-              </td>
-            </tr>
+              </div>
+            </div>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </div>
+      </div>
+    </>
   )
 }

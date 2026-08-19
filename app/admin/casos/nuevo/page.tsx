@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { Card } from '@/components/ui/Card'
+import { TopHeader } from '@/components/layout/TopHeader'
 import { NuevoCasoForm } from './NuevoCasoForm'
 
 // See app/admin/casos/page.tsx for why this is needed — without it, Next
@@ -13,11 +13,13 @@ export default async function NuevoCasoPage() {
   })
 
   return (
-    <div className="p-8">
-      <h1 className="text-lg font-medium text-brand-text">Nuevo caso</h1>
-      <Card className="mt-4 max-w-md">
-        <NuevoCasoForm organizaciones={organizaciones} />
-      </Card>
-    </div>
+    <>
+      <TopHeader title="Nuevo caso" />
+      <div className="flex-1 overflow-auto p-8">
+        <div className="mx-auto w-[680px] rounded-xl border border-brand-borderSoft bg-white p-9 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.03)]">
+          <NuevoCasoForm organizaciones={organizaciones} />
+        </div>
+      </div>
+    </>
   )
 }

@@ -1,4 +1,8 @@
 import { prisma } from '@/lib/prisma'
+import Link from 'next/link'
+import { TopHeader } from '@/components/layout/TopHeader'
+import { EstadoBadge, PrioridadBadge } from '@/components/ui/StatusBadge'
+import { ESTADOS_ACTIVOS } from '@/lib/asignacion'
 
 // Without a dynamic API, Next.js prerenders this page at build time (it
 // only queries Prisma, which Next can't detect) — freezing the case list
@@ -12,41 +16,80 @@ export default async function CasosPage() {
     orderBy: { creadoEn: 'desc' },
   })
 
+  const activos = casos.filter((c) => (ESTADOS_ACTIVOS as readonly string[]).includes(c.estado)).length
+  const urgentes = casos.filter((c) => c.prioridad === 'urgente' && (ESTADOS_ACTIVOS as readonly string[]).includes(c.estado)).length
+  const sinAsignar = casos.filter((c) => !c.medicoId && (ESTADOS_ACTIVOS as readonly string[]).includes(c.estado)).length
+
+  const kpis = [
+    { label: 'Total', value: casos.length, color: 'text-brand-text' },
+    { label: 'Activos', value: activos, color: 'text-brand-neutral' },
+    { label: 'Urgentes', value: urgentes, color: 'text-brand-danger' },
+    { label: 'Sin asignar', value: sinAsignar, color: 'text-brand-textSecondary' },
+  ]
+
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-lg font-medium text-brand-text">Casos</h1>
-        <div className="flex gap-4 text-sm">
-          <a href="/admin/casos/nuevo" className="text-brand-accent underline">Nuevo caso</a>
-          <a href="/admin/casos/importar" className="text-brand-accent underline">Importar Excel</a>
+    <>
+      <TopHeader title="Casos" badge={`${casos.length} casos`} />
+      <div className="flex-1 overflow-auto p-7">
+        <div className="mb-5 flex items-center justify-between">
+          <div className="flex gap-4">
+            {kpis.map((k) => (
+              <div
+                key={k.label}
+                className="min-w-[130px] rounded-xl border border-brand-borderSoft bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.03)]"
+              >
+                <div className="mb-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-brand-textSecondary">{k.label}</div>
+                <div className={`text-xl font-semibold ${k.color}`}>{k.value}</div>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-3">
+            <Link href="/admin/casos/nuevo">
+              <span className="inline-flex items-center gap-2 rounded-lg bg-brand-accent px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-brand-accentHover">
+                Nuevo caso
+              </span>
+            </Link>
+            <Link href="/admin/casos/importar">
+              <span className="inline-flex items-center gap-2 rounded-lg border border-brand-border bg-white px-4 py-2 text-sm font-medium text-brand-textSecondary transition hover:border-brand-accent hover:text-brand-accent">
+                Importar Excel
+              </span>
+            </Link>
+          </div>
+        </div>
+
+        <div className="overflow-hidden rounded-xl border border-brand-borderSoft bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.03)]">
+          <div className="grid grid-cols-[1.8fr_1.6fr_1.6fr_1fr_1.2fr_1fr] bg-brand-bg px-5 py-2.5">
+            <div className="text-[10.5px] font-semibold uppercase tracking-wider text-brand-textSecondary">Evaluado</div>
+            <div className="text-[10.5px] font-semibold uppercase tracking-wider text-brand-textSecondary">Organización</div>
+            <div className="text-[10.5px] font-semibold uppercase tracking-wider text-brand-textSecondary">Médico asignado</div>
+            <div className="text-[10.5px] font-semibold uppercase tracking-wider text-brand-textSecondary">Plazo</div>
+            <div className="text-[10.5px] font-semibold uppercase tracking-wider text-brand-textSecondary">Estado</div>
+            <div className="text-[10.5px] font-semibold uppercase tracking-wider text-brand-textSecondary">Prioridad</div>
+          </div>
+          {casos.length === 0 && (
+            <div className="px-5 py-16 text-center text-sm text-brand-textMuted">Todavía no hay casos ingresados.</div>
+          )}
+          {casos.map((caso) => (
+            <div
+              key={caso.id}
+              className="grid grid-cols-[1.8fr_1.6fr_1.6fr_1fr_1.2fr_1fr] items-center border-t border-brand-borderSoft/70 px-5 py-3"
+            >
+              <div className="text-sm text-brand-text">
+                {caso.nombreEvaluado} ({caso.rutEvaluado})
+              </div>
+              <div className="text-sm text-brand-textSecondary">{caso.organizacion.nombre}</div>
+              <div className="text-sm text-brand-textSecondary">{caso.medico?.nombre ?? 'Sin asignar'}</div>
+              <div className="text-sm tabular-nums text-brand-textSecondary">{caso.fechaLimite.toLocaleDateString('es-CL')}</div>
+              <div>
+                <EstadoBadge estado={caso.estado} />
+              </div>
+              <div>
+                <PrioridadBadge prioridad={caso.prioridad} />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-      <table className="mt-4 w-full text-sm">
-        <thead>
-          <tr className="text-left text-xs uppercase tracking-wide text-brand-textSecondary">
-            <th className="pb-2">Evaluado</th>
-            <th className="pb-2">Organización</th>
-            <th className="pb-2">Médico</th>
-            <th className="pb-2">Estado</th>
-            <th className="pb-2">Prioridad</th>
-            <th className="pb-2">Fecha límite</th>
-          </tr>
-        </thead>
-        <tbody>
-          {casos.map((caso) => (
-            <tr key={caso.id} className="border-t border-brand-borderSoft">
-              <td className="py-2">
-                {caso.nombreEvaluado} ({caso.rutEvaluado})
-              </td>
-              <td className="py-2">{caso.organizacion.nombre}</td>
-              <td className="py-2">{caso.medico?.nombre ?? 'Sin asignar'}</td>
-              <td className="py-2">{caso.estado}</td>
-              <td className="py-2">{caso.prioridad}</td>
-              <td className="py-2">{caso.fechaLimite.toLocaleDateString('es-CL')}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    </>
   )
 }
