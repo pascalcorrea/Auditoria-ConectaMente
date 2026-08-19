@@ -34,7 +34,7 @@ const ESTADO_TONO: Record<EstadoCaso, Tono> = {
   entregado: 'positivo',
 }
 
-const ESTADO_LABEL: Record<EstadoCaso, string> = {
+export const ESTADO_LABEL: Record<EstadoCaso, string> = {
   recibido: 'Recibido',
   en_revision: 'En revisión',
   informe_en_validacion: 'Informe en validación',
