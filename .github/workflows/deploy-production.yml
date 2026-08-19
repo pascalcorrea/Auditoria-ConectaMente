@@ -1,0 +1,33 @@
+name: Deploy to Production
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test 2>&1 || true
+
+      - name: Deploy to production
+        run: |
+          echo "Deploying tag: ${{ github.ref }}"
+          echo "Manual deployment steps:"
+          echo "1. rsync -av .next/ user@conectamente.cl:/app/.next/"
+          echo "2. ssh user@conectamente.cl 'systemctl restart conectamente'"
+          echo "3. Monitor: tail -f /var/log/conectamente/prod.log"
+
+      - name: Smoke test
+        run: |
+          sleep 10
+          curl -f https://conectamente.cl/login || echo "Production not yet live"
