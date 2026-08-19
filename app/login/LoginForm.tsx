@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { signIn, getSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
@@ -70,8 +71,14 @@ export function LoginForm() {
 
   return (
     <Card className="w-full max-w-sm px-9 py-10">
-      <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-accent text-lg font-bold text-white">
-        CM
+      <div className="mx-auto mb-5 flex justify-center">
+        <Image
+          src="/logo.svg"
+          alt="ConectaMente"
+          width={60}
+          height={60}
+          priority
+        />
       </div>
       <h1 className="mb-1 text-center text-lg font-semibold text-brand-text">ConectaMente Core</h1>
       <p className="mb-7 text-center text-sm text-brand-textSecondary">Plataforma de auditoría de licencias médicas</p>
