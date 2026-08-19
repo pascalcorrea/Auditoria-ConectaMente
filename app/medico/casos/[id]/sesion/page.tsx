@@ -36,7 +36,6 @@ export default async function MedicoCasoSesionPage({
         dailyRoomUrl={sesion.dailyRoomUrl}
         userName={`medico_${session.user.id}`}
         casoId={id}
-        medicoId={session.user.id}
       />
     </div>
   )
