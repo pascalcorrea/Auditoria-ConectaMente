@@ -1,4 +1,36 @@
-import { prisma } from './prisma'
+﻿import { prisma } from './prisma'
+import type { Prisma, EstadoCaso, PrioridadCaso } from '@prisma/client'
+
+export interface FiltrosCasos {
+  desde?: string
+  hasta?: string
+  estado?: string
+  prioridad?: string
+}
+
+export function construirWhereCasos(filtros: FiltrosCasos): Prisma.CasoWhereInput {
+  const where: Prisma.CasoWhereInput = {}
+
+  if (filtros.desde || filtros.hasta) {
+    where.fechaLimite = {}
+    if (filtros.desde) where.fechaLimite.gte = new Date(filtros.desde)
+    if (filtros.hasta) where.fechaLimite.lte = new Date(filtros.hasta)
+  }
+
+  if (filtros.estado) where.estado = filtros.estado as EstadoCaso as EstadoCaso
+  if (filtros.prioridad) where.prioridad = filtros.prioridad as PrioridadCaso as PrioridadCaso
+
+  return where
+}
+
+export async function listarCasosFiltrados(filtros: FiltrosCasos) {
+  const where = construirWhereCasos(filtros)
+  return prisma.caso.findMany({
+    where,
+    include: { organizacion: true, medico: true },
+    orderBy: { creadoEn: 'desc' },
+  })
+}
 
 export async function listarTodosCasos() {
   return prisma.caso.findMany({
