@@ -9,7 +9,7 @@ export default function LoginPage() {
       style={{ background: 'linear-gradient(135deg, #EDF0F5 0%, #E8EEF6 50%, #EAF2ED 100%)' }}
       className="flex min-h-screen items-center justify-center p-4"
     >
-      <Suspense>
+      <Suspense fallback={<div className="text-center">Cargando...</div>}>
         <LoginForm />
       </Suspense>
     </div>
