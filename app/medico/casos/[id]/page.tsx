@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { Card } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
 
 export const dynamic = 'force-dynamic'
 
