@@ -27,14 +27,17 @@ export default async function AdminOrganizacionesPage() {
             </tr>
           </thead>
           <tbody>
-            {organizaciones.map((o: any) => (
-              <tr key={o.id} className="border-t border-brand-borderSoft">
-                <td className="p-3">{o.nombre}</td>
-                <td className="p-3">{o.rut}</td>
-                <td className="p-3 text-right">{o._count.usuarios}</td>
-                <td className="p-3 text-right">{o._count.casos}</td>
+            {organizaciones.map((o: unknown) => {
+              const org = o as { id: string; nombre: string; rut: string; _count: { usuarios: number; casos: number } }
+              return (
+              <tr key={org.id} className="border-t border-brand-borderSoft">
+                <td className="p-3">{org.nombre}</td>
+                <td className="p-3">{org.rut}</td>
+                <td className="p-3 text-right">{org._count.usuarios}</td>
+                <td className="p-3 text-right">{org._count.casos}</td>
               </tr>
-            ))}
+              )
+            })}
           </tbody>
         </table>
       </Card>
