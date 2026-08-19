@@ -43,7 +43,7 @@ export default async function AdminUsuariosPage() {
                 <td className="p-3">{u.activo ? 'Activo' : 'Inactivo'}</td>
                 <td className="p-3 text-center">
                   <Link href={`/admin/usuarios/${u.id}`}>
-                    <Button variant="secondary" size="sm">
+                    <Button variant="secondary">
                       Editar
                     </Button>
                   </Link>

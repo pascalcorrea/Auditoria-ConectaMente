@@ -1,4 +1,5 @@
 import { prisma } from './prisma'
+import { TipoOrganizacion } from '@prisma/client'
 
 export async function listarOrganizaciones() {
   return prisma.organizacion.findMany({
@@ -11,7 +12,7 @@ export async function listarOrganizaciones() {
   })
 }
 
-export async function crearOrganizacion(data: { nombre: string; rut: string; contacto: string }) {
+export async function crearOrganizacion(data: { nombre: string; rut: string; contacto: string; tipo: TipoOrganizacion; plazoSlaDias: number }) {
   return prisma.organizacion.create({
     data,
   })
