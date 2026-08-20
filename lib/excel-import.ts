@@ -8,6 +8,8 @@ export type FilaImportacion = {
   datos: {
     rut: string
     nombre: string
+    email?: string
+    telefono?: string
     organizacion: string
     tipoLicencia: string
     fechaEmision: string
@@ -20,6 +22,12 @@ const COLUMNAS: Record<string, keyof FilaImportacion['datos']> = {
   'rut evaluado': 'rut',
   rut: 'rut',
   nombre: 'nombre',
+  'email evaluado': 'email',
+  email: 'email',
+  'teléfono evaluado': 'telefono',
+  'telefono evaluado': 'telefono',
+  teléfono: 'telefono',
+  telefono: 'telefono',
   organización: 'organizacion',
   organizacion: 'organizacion',
   'tipo de licencia': 'tipoLicencia',
@@ -47,6 +55,8 @@ export async function parseCasosExcel(buffer: ArrayBuffer): Promise<FilaImportac
     const datos: FilaImportacion['datos'] = {
       rut: '',
       nombre: '',
+      email: '',
+      telefono: '',
       organizacion: '',
       tipoLicencia: '',
       fechaEmision: '',

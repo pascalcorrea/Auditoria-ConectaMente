@@ -41,12 +41,19 @@ export default async function AdminUsuariosPage() {
                 <td className="p-3">{u.email}</td>
                 <td className="p-3">{u.rol}</td>
                 <td className="p-3">{u.activo ? 'Activo' : 'Inactivo'}</td>
-                <td className="p-3 text-center">
+                <td className="p-3 text-center flex gap-2 justify-center">
                   <Link href={`/admin/usuarios/${u.id}`}>
                     <Button variant="secondary">
                       Editar
                     </Button>
                   </Link>
+                  {u.rol === 'medico' && (
+                    <Link href={`/admin/usuarios/${u.id}/horario`}>
+                      <Button variant="secondary">
+                        Horario
+                      </Button>
+                    </Link>
+                  )}
                 </td>
               </tr>
             ))}

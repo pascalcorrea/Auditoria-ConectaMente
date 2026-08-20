@@ -24,6 +24,8 @@ export async function crearCasoIndividual(_prevState: CrearCasoState, formData: 
 
   const rut = String(formData.get('rut') ?? '')
   const nombreEvaluado = String(formData.get('nombreEvaluado') ?? '').trim()
+  const emailEvaluado = String(formData.get('emailEvaluado') ?? '').trim()
+  const telefonoEvaluado = String(formData.get('telefonoEvaluado') ?? '').trim()
   const organizacionId = String(formData.get('organizacionId') ?? '')
   const tipoLicencia = String(formData.get('tipoLicencia') ?? '').trim()
   const fechaEmisionLicenciaRaw = String(formData.get('fechaEmisionLicencia') ?? '')
@@ -34,6 +36,14 @@ export async function crearCasoIndividual(_prevState: CrearCasoState, formData: 
   if (!tipoLicencia) return { error: 'Tipo de licencia requerido' }
   const fechaEmisionLicencia = parseFechaEmision(fechaEmisionLicenciaRaw)
   if (!fechaEmisionLicencia) return { error: 'Fecha de emisión inválida' }
+
+  // Validación básica de email y teléfono (solo si vienen)
+  if (emailEvaluado && !emailEvaluado.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+    // Email inválido pero no bloquea creación, solo se ignora
+  }
+  if (telefonoEvaluado && !telefonoEvaluado.match(/^\d{7,}$/)) {
+    // Teléfono inválido pero no bloquea creación, solo se ignora
+  }
 
   const organizacion = await prisma.organizacion.findUnique({ where: { id: organizacionId } })
   if (!organizacion) return { error: 'Organización inválida' }
@@ -49,6 +59,8 @@ export async function crearCasoIndividual(_prevState: CrearCasoState, formData: 
       medicoId,
       rutEvaluado: normalizeRut(rut),
       nombreEvaluado,
+      emailEvaluado: emailEvaluado || null,
+      telefonoEvaluado: telefonoEvaluado || null,
       tipoLicencia,
       fechaEmisionLicencia,
       fechaIngreso,

@@ -73,16 +73,17 @@ enum EstadoFactura {
 }
 
 model Usuario {
-  id             String   @id @default(cuid())
-  nombre         String
-  email          String   @unique
-  passwordHash   String
-  rol            Rol
-  activo         Boolean  @default(true)
-  creadoEn       DateTime @default(now())
-  organizacionId String?
-  especialidad   String?
-  tarifaCasoClp  Int?
+  id               String   @id @default(cuid())
+  nombre           String
+  email            String   @unique
+  passwordHash     String
+  rol              Rol
+  activo           Boolean  @default(true)
+  creadoEn         DateTime @default(now())
+  organizacionId   String?
+  especialidad     String?
+  tarifaCasoClp    Int?
+  ameliaProviderId Int?     @unique
 
   organizacion      Organizacion? @relation(fields: [organizacionId], references: [id], onDelete: Restrict)
   casosAsignados    Caso[]        @relation("CasoMedico")
@@ -115,6 +116,8 @@ model Caso {
   medicoId              String?
   rutEvaluado           String
   nombreEvaluado        String
+  emailEvaluado         String?
+  telefonoEvaluado      String?
   estado                EstadoCaso    @default(recibido)
   tipoLicencia          String
   fechaEmisionLicencia  DateTime
@@ -149,6 +152,7 @@ model Sesion {
   evaluadoHoraConexion     DateTime?
   evaluadoHoraDesconexion  DateTime?
   duracionEfectivaSegundos Int?
+  ameliaAppointmentId      Int?         @unique
 
   caso Caso @relation(fields: [casoId], references: [id], onDelete: Restrict)
 }
