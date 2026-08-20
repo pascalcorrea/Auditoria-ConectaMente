@@ -41,12 +41,25 @@ blog (fase 2 del sitio, no MVP), precios públicos, chat B2C genérico.
 - **Sistema de diseño extraído de la fuente real**, no interpretado
   desde los docs. Fuente: `E:\Dev\ConectaMente-2` (el sitio clínico
   público real), específicamente:
-  - `tailwind.config.ts` → paleta real: `primary` `#2D6B9E`
-    (`light` `#4A90C4`, `dark` `#1E4F75`), `accent` `#5BB8A0`, escala
-    `neutral` (`50` `#F8FAFB`, `100` `#F0F4F8`, `900` `#1A2332`),
-    tipografía `Inter`.
+  - `app/globals.css` → paleta real (CSS custom properties, lo que
+    realmente consumen los componentes vía `var(--primary)` etc. — el
+    `tailwind.config.ts` del proyecto define una paleta azul distinta
+    que resultó no estar en uso real por ningún componente, se descarta
+    como fuente): `--primary` `#2C7F66`, `--primary-dark` `#1F5C4B`,
+    `--primary-light` `#EBF5F0`, `--primary-subtle` `#F5FAF7`,
+    `--bg-page` `#FAFBFC`, `--text-primary` `#1A1A2E`,
+    `--text-secondary` `#5F6B7A`, `--text-muted` `#9CA3AF`, `--border`
+    `#E5E7EB`, `--border-light` `#F0F1F3`. Tipografía: system font stack
+    (`-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica
+    Neue', sans-serif`), no `Inter` como sugería el tailwind.config sin
+    uso real. Esta misma familia verde es la que ya usa
+    `lib/design-tokens.ts` de este repo (Core) para el retrofit del
+    admin — consistente entre ambos productos.
   - `components/layout/Header.tsx` / `Footer.tsx` (+ sus `.module.css`)
-    como referencia de estructura de nav/footer.
+    como referencia de estructura de nav/footer (mega-menús y enlaces
+    específicos de la clínica no aplican al sitio institucional — se
+    reutiliza el patrón visual: top bar, header sticky con blur, botones
+    con radio 8px, no el contenido).
   - `app/(public)/layout.tsx` como referencia del layout base público.
   - No se copia código 1:1 (proyecto nuevo desde cero, por mandato del
     doc maestro) — se reconstruyen los tokens y patrones en el
