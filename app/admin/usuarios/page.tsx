@@ -48,7 +48,7 @@ export default async function AdminUsuariosPage() {
                     </Button>
                   </Link>
                   {u.rol === 'medico' && (
-                    <Link href={`/admin/usuarios/${u.id}/horario`}>
+                    <Link href={`/admin/usuarios/${u.id}`}>
                       <Button variant="secondary">
                         Horario
                       </Button>
