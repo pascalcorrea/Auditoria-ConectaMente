@@ -1,36 +1,71 @@
-import PDFDocument from 'pdfkit'
-import type { Caso } from '@prisma/client'
+interface PDFData {
+  nombreEvaluado: string
+  rutEvaluado: string
+  organizacion: string
+  fecha: Date
+  medico: string
+  antecedentes: string
+  hallazgos: string
+  diagnosticos: string
+  conclusiones: string
+  recomendaciones: string
+  observaciones: string
+}
 
-export async function generateCasoPDF(
-  caso: Caso & { organizacion: { nombre: string }; medico: { nombre: string } },
-  transcription: string
-): Promise<Buffer> {
+export async function generatePDFBuffer(data: PDFData): Promise<Buffer> {
+  // Dynamic import to avoid issues in edge environments
+  const PDFDocument = (await import('pdfkit')).default
+
   return new Promise((resolve, reject) => {
-    const doc = new PDFDocument()
-    const buffers: Buffer[] = []
+    try {
+      const doc = new PDFDocument()
+      const chunks: Buffer[] = []
 
-    doc.on('data', (chunk: Buffer) => buffers.push(chunk))
-    doc.on('end', () => resolve(Buffer.concat(buffers)))
-    doc.on('error', reject)
+      doc.on('data', (chunk: Buffer) => chunks.push(chunk))
+      doc.on('end', () => resolve(Buffer.concat(chunks)))
+      doc.on('error', reject)
 
-    doc.fontSize(20).text('Informe de Auditoría Médica', { align: 'center' })
-    doc.fontSize(12).text(`Caso: ${caso.nombreEvaluado}`, { align: 'center' })
-    doc.moveDown()
+      // Header
+      doc.fontSize(20).font('Helvetica-Bold').text('Informe de Evaluación', { align: 'center' })
+      doc.fontSize(11).font('Helvetica').text('ConectaMente', { align: 'center' })
+      doc.moveDown(0.5)
 
-    doc.fontSize(14).text('Información del Caso', { underline: true })
-    doc.fontSize(10)
-    doc.text(`Organización: ${caso.organizacion.nombre}`)
-    doc.text(`Médico: ${caso.medico.nombre}`)
-    doc.text(`Estado: ${caso.estado}`)
-    doc.text(`Fecha Límite: ${caso.fechaLimite.toLocaleDateString('es-CL')}`)
-    doc.moveDown()
+      // Info block
+      doc.fontSize(10)
+      doc.text(`Fecha: ${data.fecha.toLocaleDateString('es-CL')}`)
+      doc.text(`Evaluado: ${data.nombreEvaluado} (${data.rutEvaluado})`)
+      doc.text(`Organización: ${data.organizacion}`)
+      doc.text(`Médico evaluador: ${data.medico}`)
+      doc.moveDown(1)
 
-    doc.fontSize(14).text('Transcripción de Sesión', { underline: true })
-    doc.fontSize(10).text(transcription || '(Sin transcripción disponible)')
-    doc.moveDown()
+      // Sections
+      const sections = [
+        { title: 'Antecedentes', content: data.antecedentes },
+        { title: 'Hallazgos clínicos', content: data.hallazgos },
+        { title: 'Diagnósticos', content: data.diagnosticos },
+        { title: 'Conclusiones', content: data.conclusiones },
+      ]
 
-    doc.fontSize(8).text(`Generado: ${new Date().toLocaleString('es-CL')}`, { align: 'right' })
+      if (data.recomendaciones) {
+        sections.push({ title: 'Recomendaciones', content: data.recomendaciones })
+      }
 
-    doc.end()
+      if (data.observaciones) {
+        sections.push({ title: 'Observaciones', content: data.observaciones })
+      }
+
+      sections.forEach((section) => {
+        doc.fontSize(12).font('Helvetica-Bold').text(section.title)
+        doc.fontSize(10).font('Helvetica').text(section.content, { align: 'justify' })
+        doc.moveDown(0.5)
+      })
+
+      // Footer
+      doc.fontSize(8).text('Este documento es confidencial', { align: 'center' })
+
+      doc.end()
+    } catch (err) {
+      reject(err)
+    }
   })
 }

@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Textarea } from '@/components/ui/Textarea'
 import { BotonFirmar } from '@/components/BotonFirmar'
+import { FormularioEvaluacion } from '@/components/FormularioEvaluacion'
 
 export const dynamic = 'force-dynamic'
 
@@ -71,17 +72,12 @@ export default async function MedicoCasoInformePage({
             </div>
           </div>
         ) : (
-          <form action={`/api/medico/casos/${id}/informe/generar`} method="POST">
-            <p className="text-sm text-brand-textSecondary mb-4">Genera el informe de evaluación:</p>
-            <Textarea
-              name="contenido"
-              placeholder="Contenido del informe..."
-              rows={10}
-              required
-              className="mb-4"
-            />
-            <Button type="submit">Generar informe PDF</Button>
-          </form>
+          <>
+            <p className="text-sm text-brand-textSecondary mb-6">
+              Completa el formulario de evaluación para generar el informe:
+            </p>
+            <FormularioEvaluacion casoId={id} nombreEvaluado={caso.nombreEvaluado} />
+          </>
         )}
       </Card>
     </div>

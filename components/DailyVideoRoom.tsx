@@ -1,17 +1,18 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Button } from './ui/Button'
 
 interface DailyVideoRoomProps {
-  dailyRoomUrl: string
-  userName: string
   casoId: string
 }
 
-export function DailyVideoRoom({ dailyRoomUrl, userName, casoId }: DailyVideoRoomProps) {
+export function DailyVideoRoom({ casoId }: DailyVideoRoomProps) {
   const [consentGiven, setConsentGiven] = useState(false)
   const [sessionStarted, setSessionStarted] = useState(false)
+  const [token, setToken] = useState<string | null>(null)
+  const [roomUrl, setRoomUrl] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
@@ -21,12 +22,22 @@ export function DailyVideoRoom({ dailyRoomUrl, userName, casoId }: DailyVideoRoo
       return
     }
 
+    setLoading(true)
     try {
+      const res = await fetch(`/api/medico/casos/${casoId}/sesion/token`)
+      if (!res.ok) throw new Error('Failed to get token')
+
+      const data = await res.json()
+      setToken(data.token)
+      setRoomUrl(data.roomUrl)
+
       await fetch(`/api/medico/casos/${casoId}/sesion/consent`, { method: 'POST' })
       setSessionStarted(true)
       setError(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al iniciar sesión')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -34,6 +45,8 @@ export function DailyVideoRoom({ dailyRoomUrl, userName, casoId }: DailyVideoRoo
     try {
       await fetch(`/api/medico/casos/${casoId}/sesion/end`, { method: 'POST' })
       setSessionStarted(false)
+      setToken(null)
+      setRoomUrl(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al finalizar')
     }
@@ -57,9 +70,19 @@ export function DailyVideoRoom({ dailyRoomUrl, userName, casoId }: DailyVideoRoo
             />
             <span className="text-sm text-brand-text">Tengo consentimiento para grabar</span>
           </label>
-          <Button onClick={handleStartSession} disabled={!consentGiven}>
-            Iniciar sesión
+          <Button onClick={handleStartSession} disabled={!consentGiven || loading}>
+            {loading ? 'Conectando...' : 'Iniciar sesión'}
           </Button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!token || !roomUrl) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-brand-bgSecondary">
+        <div className="text-center">
+          <p className="text-sm text-brand-textSecondary">Conectando...</p>
         </div>
       </div>
     )
@@ -69,7 +92,7 @@ export function DailyVideoRoom({ dailyRoomUrl, userName, casoId }: DailyVideoRoo
     <div className="flex-1 flex flex-col bg-black">
       <iframe
         ref={iframeRef}
-        src={`${dailyRoomUrl}?userName=${encodeURIComponent(userName)}`}
+        src={`${roomUrl}?token=${encodeURIComponent(token)}`}
         className="flex-1 w-full border-0"
         allow="camera; microphone; display-capture"
       />
