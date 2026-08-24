@@ -2,7 +2,6 @@ import { getServerSession } from 'next-auth'
 import { notFound } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { obtenerSesion } from '@/lib/medico-sesion'
 import { DailyVideoRoom } from '@/components/DailyVideoRoom'
 
 export const dynamic = 'force-dynamic'
@@ -22,9 +21,11 @@ export default async function MedicoCasoSesionPage({
 
   if (!caso || caso.medicoId !== session.user.id) notFound()
 
-  const sesion = await obtenerSesion(id)
+  const sesion = await prisma.sesion.findFirst({
+    where: { casoId: id },
+  })
 
-  if (!sesion || !sesion.dailyRoomUrl) {
+  if (!sesion) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-brand-bg">
         <div className="max-w-sm rounded-lg border border-brand-borderSoft bg-white p-6 shadow-sm">
@@ -43,11 +44,7 @@ export default async function MedicoCasoSesionPage({
         <h1 className="text-sm font-medium text-brand-text">{caso.nombreEvaluado}</h1>
       </header>
 
-      <DailyVideoRoom
-        dailyRoomUrl={sesion.dailyRoomUrl}
-        userName={`medico_${session.user.id}`}
-        casoId={id}
-      />
+      <DailyVideoRoom casoId={id} />
     </div>
   )
 }
