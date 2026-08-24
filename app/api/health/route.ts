@@ -3,17 +3,31 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET() {
   try {
-    // Check database
-    await prisma.$queryRaw`SELECT 1`
+    const version = process.env.npm_package_version || '0.1.0'
+    const env = process.env.NODE_ENV || 'development'
 
-    return NextResponse.json(
-      {
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        uptime: process.uptime(),
+    const health = {
+      status: 'ok' as const,
+      version,
+      environment: env,
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      integrations: {
+        daily: process.env.DAILY_API_KEY ? 'configured' : 'missing',
+        brevo: process.env.BREVO_API_KEY ? 'configured' : 'missing',
+        firma: process.env.FIRMA_PROVIDER || 'mock',
       },
-      { status: 200 }
-    )
+    }
+
+    try {
+      await prisma.$queryRaw`SELECT 1`
+    } catch {
+      health.status = 'degraded'
+    }
+
+    return NextResponse.json(health, {
+      status: health.status === 'ok' ? 200 : 503,
+    })
   } catch (err) {
     return NextResponse.json(
       {
