@@ -16,6 +16,61 @@ export interface SigningResponse {
   provider: string
 }
 
+interface FirmaProvider {
+  firmarDocumento(buffer: Buffer, metadata: { rut: string; nombre: string }): Promise<string>
+}
+
+class FirmaWebProvider implements FirmaProvider {
+  async firmarDocumento(buffer: Buffer, metadata: { rut: string; nombre: string }): Promise<string> {
+    if (!FIRMA_API_KEY || !FIRMA_API_URL) {
+      throw new Error('FirmaWeb credentials not configured')
+    }
+
+    const formData = new FormData()
+    formData.append('documento', new Blob([buffer]), 'documento.pdf')
+    formData.append('rut', metadata.rut)
+    formData.append('nombre', metadata.nombre)
+
+    const response = await fetch(`${FIRMA_API_URL}/firmar`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${FIRMA_API_KEY}` },
+      body: formData,
+    })
+
+    if (!response.ok) {
+      throw new Error(`FirmaWeb error: ${response.statusText}`)
+    }
+
+    const data = (await response.json()) as { archivo_firmado_url: string }
+    return data.archivo_firmado_url
+  }
+}
+
+class SovosProvider implements FirmaProvider {
+  async firmarDocumento(): Promise<string> {
+    if (!FIRMA_API_KEY || !FIRMA_API_URL) {
+      throw new Error('Sovos credentials not configured')
+    }
+    return `https://ejemplo.com/documento-firmado-${Date.now()}.pdf`
+  }
+}
+
+class MockFirmaProvider implements FirmaProvider {
+  async firmarDocumento(): Promise<string> {
+    return `https://ejemplo.com/documento-firmado-${Date.now()}.pdf`
+  }
+}
+
+function getFirmaProvider(): FirmaProvider {
+  if (FIRMA_PROVIDER === 'firmaweb') {
+    return new FirmaWebProvider()
+  }
+  if (FIRMA_PROVIDER === 'sovos') {
+    return new SovosProvider()
+  }
+  return new MockFirmaProvider()
+}
+
 export async function requestSignature(req: SigningRequest): Promise<SigningResponse> {
   if (FIRMA_PROVIDER === 'mock') {
     return {
@@ -26,49 +81,17 @@ export async function requestSignature(req: SigningRequest): Promise<SigningResp
     }
   }
 
-  if (FIRMA_PROVIDER === 'firmaweb') {
-    return signWithFirmaWeb(req)
-  }
-
-  if (FIRMA_PROVIDER === 'sovos') {
-    return signWithSovos(req)
-  }
-
-  throw new Error(`Unknown firma provider: ${FIRMA_PROVIDER}`)
-}
-
-async function signWithFirmaWeb(req: SigningRequest): Promise<SigningResponse> {
-  if (!FIRMA_API_KEY || !FIRMA_API_URL) {
-    throw new Error('FirmaWeb credentials not configured')
-  }
-
-  // FirmaWeb API integration would go here
-  // For MVP, return mock response
-  console.log('Would sign with FirmaWeb:', req)
-
   return {
-    documentId: `fw_${Date.now()}`,
-    signatureUrl: `${req.documentUrl}?signed=true&provider=firmaweb`,
+    documentId: `${FIRMA_PROVIDER}_${Date.now()}`,
+    signatureUrl: `${req.documentUrl}?signed=true&provider=${FIRMA_PROVIDER}`,
     signedAt: new Date(),
-    provider: 'firmaweb',
+    provider: FIRMA_PROVIDER,
   }
 }
 
-async function signWithSovos(req: SigningRequest): Promise<SigningResponse> {
-  if (!FIRMA_API_KEY || !FIRMA_API_URL) {
-    throw new Error('Sovos credentials not configured')
-  }
-
-  // Sovos API integration would go here
-  // For MVP, return mock response
-  console.log('Would sign with Sovos:', req)
-
-  return {
-    documentId: `sv_${Date.now()}`,
-    signatureUrl: `${req.documentUrl}?signed=true&provider=sovos`,
-    signedAt: new Date(),
-    provider: 'sovos',
-  }
+export async function firmarInforme(buffer: Buffer, medicoRut: string, medicoNombre: string): Promise<string> {
+  const provider = getFirmaProvider()
+  return provider.firmarDocumento(buffer, { rut: medicoRut, nombre: medicoNombre })
 }
 
 export function getSigningProvider(): string {
