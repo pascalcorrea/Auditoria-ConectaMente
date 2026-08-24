@@ -14,13 +14,12 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@deepgram/sdk": "^5.8.0",
+    "@daily-co/daily-js": "^0.92.0",
     "@prisma/client": "^5.22.0",
-    "@types/pdfkit": "^0.17.6",
+    "@react-pdf/renderer": "^4.6.1",
     "bcryptjs": "^3.0.3",
     "next": "^15.0.0",
     "next-auth": "^4.24.15",
-    "pdfkit": "^0.19.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
