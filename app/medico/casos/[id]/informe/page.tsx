@@ -6,6 +6,8 @@ import { prisma } from '@/lib/prisma'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Textarea } from '@/components/ui/Textarea'
+import { BotonFirmar } from '@/components/BotonFirmar'
+import { FormularioEvaluacion } from '@/components/FormularioEvaluacion'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,43 +31,53 @@ export default async function MedicoCasoInformePage({
     <div className="p-8">
       <h1 className="text-lg font-medium text-brand-text">Informe: {caso.nombreEvaluado}</h1>
 
-      <Card className="mt-4 max-w-2xl">
+      <Card className="mt-4 max-w-2xl p-6">
         {caso.informe ? (
-          <div>
-            <p className="text-sm text-brand-textSecondary">
-              Generado en: {caso.informe.generadoEn.toLocaleString('es-CL')}
-            </p>
-            <Link
-              href={caso.informe.archivoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition bg-white text-brand-textSecondary border border-brand-border hover:border-brand-accent hover:text-brand-accent mt-2"
-            >
-              Descargar informe (sin firmar)
-            </Link>
-            {caso.informe.archivoFirmadoUrl && (
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm text-brand-textSecondary">
+                Generado en: {caso.informe.generadoEn.toLocaleString('es-CL')}
+              </p>
+              {caso.informe.firmaTimestamp && (
+                <p className="text-sm text-brand-textSecondary">
+                  Firmado en: {caso.informe.firmaTimestamp.toLocaleString('es-CL')}
+                </p>
+              )}
+            </div>
+
+            <div className="flex gap-2">
               <Link
-                href={caso.informe.archivoFirmadoUrl}
+                href={caso.informe.archivoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition bg-white text-brand-textSecondary border border-brand-border hover:border-brand-accent hover:text-brand-accent mt-2 ml-2"
+                className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition bg-white text-brand-textSecondary border border-brand-border hover:border-brand-accent hover:text-brand-accent"
               >
-                Descargar informe firmado
+                Descargar PDF
               </Link>
-            )}
+
+              {caso.informe.archivoFirmadoUrl && (
+                <Link
+                  href={caso.informe.archivoFirmadoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition bg-white text-brand-textSecondary border border-brand-border hover:border-brand-accent hover:text-brand-accent"
+                >
+                  Descargar Firmado
+                </Link>
+              )}
+
+              {!caso.informe.archivoFirmadoUrl && (
+                <BotonFirmar casoId={id} />
+              )}
+            </div>
           </div>
         ) : (
-          <form action={`/api/medico/casos/${id}/informe/generar`} method="POST">
-            <p className="text-sm text-brand-textSecondary mb-4">Genera el informe de evaluación:</p>
-            <Textarea
-              name="contenido"
-              placeholder="Contenido del informe..."
-              rows={10}
-              required
-              className="mb-4"
-            />
-            <Button type="submit">Generar informe PDF</Button>
-          </form>
+          <>
+            <p className="text-sm text-brand-textSecondary mb-6">
+              Completa el formulario de evaluación para generar el informe:
+            </p>
+            <FormularioEvaluacion casoId={id} nombreEvaluado={caso.nombreEvaluado} />
+          </>
         )}
       </Card>
     </div>

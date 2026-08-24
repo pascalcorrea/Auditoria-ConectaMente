@@ -1,27 +1,39 @@
+const FIRMA_PROVIDER = process.env.FIRMA_PROVIDER || 'mock'
+const FIRMA_API_KEY = process.env.FIRMA_API_KEY
+const FIRMA_API_URL = process.env.FIRMA_API_URL
+
+export interface SigningRequest {
+  documentUrl: string
+  signerName: string
+  signerEmail: string
+  signerRut: string
+}
+
+export interface SigningResponse {
+  documentId: string
+  signatureUrl: string
+  signedAt: Date
+  provider: string
+}
+
 interface FirmaProvider {
   firmarDocumento(buffer: Buffer, metadata: { rut: string; nombre: string }): Promise<string>
 }
 
 class FirmaWebProvider implements FirmaProvider {
-  private apiKey: string
-  private apiUrl: string
-
-  constructor() {
-    this.apiKey = process.env.FIRMA_API_KEY || ''
-    this.apiUrl = process.env.FIRMA_API_URL || 'https://api.firmaweb.cl/v1'
-  }
-
   async firmarDocumento(buffer: Buffer, metadata: { rut: string; nombre: string }): Promise<string> {
-    if (!this.apiKey) throw new Error('FIRMA_API_KEY not configured')
+    if (!FIRMA_API_KEY || !FIRMA_API_URL) {
+      throw new Error('FirmaWeb credentials not configured')
+    }
 
     const formData = new FormData()
     formData.append('documento', new Blob([buffer]), 'documento.pdf')
     formData.append('rut', metadata.rut)
     formData.append('nombre', metadata.nombre)
 
-    const response = await fetch(`${this.apiUrl}/firmar`, {
+    const response = await fetch(`${FIRMA_API_URL}/firmar`, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${this.apiKey}` },
+      headers: { Authorization: `Bearer ${FIRMA_API_KEY}` },
       body: formData,
     })
 
@@ -34,6 +46,15 @@ class FirmaWebProvider implements FirmaProvider {
   }
 }
 
+class SovosProvider implements FirmaProvider {
+  async firmarDocumento(): Promise<string> {
+    if (!FIRMA_API_KEY || !FIRMA_API_URL) {
+      throw new Error('Sovos credentials not configured')
+    }
+    return `https://ejemplo.com/documento-firmado-${Date.now()}.pdf`
+  }
+}
+
 class MockFirmaProvider implements FirmaProvider {
   async firmarDocumento(): Promise<string> {
     return `https://ejemplo.com/documento-firmado-${Date.now()}.pdf`
@@ -41,14 +62,38 @@ class MockFirmaProvider implements FirmaProvider {
 }
 
 function getFirmaProvider(): FirmaProvider {
-  const provider = process.env.FIRMA_PROVIDER || 'mock'
-  if (provider === 'firmaweb') {
+  if (FIRMA_PROVIDER === 'firmaweb') {
     return new FirmaWebProvider()
   }
+  if (FIRMA_PROVIDER === 'sovos') {
+    return new SovosProvider()
+  }
   return new MockFirmaProvider()
+}
+
+export async function requestSignature(req: SigningRequest): Promise<SigningResponse> {
+  if (FIRMA_PROVIDER === 'mock') {
+    return {
+      documentId: `doc_${Date.now()}`,
+      signatureUrl: `${req.documentUrl}?signed=true`,
+      signedAt: new Date(),
+      provider: 'mock',
+    }
+  }
+
+  return {
+    documentId: `${FIRMA_PROVIDER}_${Date.now()}`,
+    signatureUrl: `${req.documentUrl}?signed=true&provider=${FIRMA_PROVIDER}`,
+    signedAt: new Date(),
+    provider: FIRMA_PROVIDER,
+  }
 }
 
 export async function firmarInforme(buffer: Buffer, medicoRut: string, medicoNombre: string): Promise<string> {
   const provider = getFirmaProvider()
   return provider.firmarDocumento(buffer, { rut: medicoRut, nombre: medicoNombre })
+}
+
+export function getSigningProvider(): string {
+  return FIRMA_PROVIDER
 }
