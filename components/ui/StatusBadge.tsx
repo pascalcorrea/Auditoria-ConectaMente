@@ -9,6 +9,22 @@ const TONO_CLASSES: Record<Tono, string> = {
   inactivo: 'bg-brand-inactiveSoft text-brand-inactive',
 }
 
+// Dot colors for status dropdowns (hex format)
+export const ESTADO_DOT_COLOR: Record<EstadoCaso, string> = {
+  recibido: '#6366F1',
+  en_revision: '#6366F1',
+  informe_en_validacion: '#6366F1',
+  entregado: '#0CB87E',
+}
+
+// Dot classes for status dropdowns (Tailwind format, optional)
+export const ESTADO_DOT_CLASS: Record<EstadoCaso, string> = {
+  recibido: 'bg-brand-neutral',
+  en_revision: 'bg-brand-neutral',
+  informe_en_validacion: 'bg-brand-neutral',
+  entregado: 'bg-brand-accent',
+}
+
 // Mirrors ConectaMente's real STATUS_COLOR convention (E:\Dev\ConectaMente-2):
 // índigo for anything still in progress, green only once truly complete.
 const ESTADO_TONO: Record<EstadoCaso, Tono> = {
@@ -18,7 +34,7 @@ const ESTADO_TONO: Record<EstadoCaso, Tono> = {
   entregado: 'positivo',
 }
 
-const ESTADO_LABEL: Record<EstadoCaso, string> = {
+export const ESTADO_LABEL: Record<EstadoCaso, string> = {
   recibido: 'Recibido',
   en_revision: 'En revisión',
   informe_en_validacion: 'Informe en validación',
@@ -51,4 +67,46 @@ export function EstadoBadge({ estado }: { estado: EstadoCaso }) {
 
 export function PrioridadBadge({ prioridad }: { prioridad: PrioridadCaso }) {
   return <Badge tono={PRIORIDAD_TONO[prioridad]} label={PRIORIDAD_LABEL[prioridad]} />
+}
+
+import type { EstadoEnvio } from '@prisma/client'
+
+export const ESTADO_ENVIO_TONO: Record<EstadoEnvio, Tono> = {
+  enviado: 'neutral',
+  entregado: 'positivo',
+  leido: 'positivo',
+  fallido: 'negativo',
+}
+
+export const ESTADO_ENVIO_LABEL: Record<EstadoEnvio, string> = {
+  enviado: 'Enviado',
+  entregado: 'Entregado',
+  leido: 'Leído',
+  fallido: 'Fallido',
+}
+
+export { TONO_CLASSES }
+
+import type { EstadoPago, EstadoFactura } from '@prisma/client'
+
+export const ESTADO_PAGO_TONO: Record<EstadoPago, Tono> = {
+  pendiente: 'neutral',
+  pagado: 'positivo',
+}
+
+export const ESTADO_PAGO_LABEL: Record<EstadoPago, string> = {
+  pendiente: 'Pendiente',
+  pagado: 'Pagado',
+}
+
+export const ESTADO_FACTURA_TONO: Record<EstadoFactura, Tono> = {
+  pendiente: 'neutral',
+  facturada: 'neutral',
+  pagada: 'positivo',
+}
+
+export const ESTADO_FACTURA_LABEL: Record<EstadoFactura, string> = {
+  pendiente: 'Pendiente',
+  facturada: 'Facturada',
+  pagada: 'Pagada',
 }

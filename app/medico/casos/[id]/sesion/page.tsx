@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth'
 import { notFound } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { obtenerOCrearSesion } from '@/lib/medico-sesion'
+import { obtenerSesion } from '@/lib/medico-sesion'
 import { DailyVideoRoom } from '@/components/DailyVideoRoom'
 
 export const dynamic = 'force-dynamic'
@@ -22,9 +22,20 @@ export default async function MedicoCasoSesionPage({
 
   if (!caso || caso.medicoId !== session.user.id) notFound()
 
-  const sesion = await obtenerOCrearSesion(id)
+  const sesion = await obtenerSesion(id)
 
-  if (!sesion.dailyRoomUrl) notFound()
+  if (!sesion || !sesion.dailyRoomUrl) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-brand-bg">
+        <div className="max-w-sm rounded-lg border border-brand-borderSoft bg-white p-6 shadow-sm">
+          <h2 className="mb-2 text-base font-semibold text-brand-text">Sesión no agendada</h2>
+          <p className="text-sm text-brand-textSecondary">
+            La sesión aún no ha sido agendada. Contacta a backoffice para coordinar la cita.
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="h-screen w-screen flex flex-col">
@@ -36,7 +47,6 @@ export default async function MedicoCasoSesionPage({
         dailyRoomUrl={sesion.dailyRoomUrl}
         userName={`medico_${session.user.id}`}
         casoId={id}
-        medicoId={session.user.id}
       />
     </div>
   )

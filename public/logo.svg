@@ -1,0 +1,12 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="100" fill="#2563eb"/>
+
+  <!-- "C" shape -->
+  <path d="M 70 60 Q 50 60 50 100 Q 50 140 70 140 L 85 140"
+        stroke="white" stroke-width="15" fill="none" stroke-linecap="round"/>
+
+  <!-- "M" shape -->
+  <path d="M 115 60 L 115 140 M 115 60 L 130 100 L 145 60 M 145 60 L 145 140"
+        stroke="white" stroke-width="15" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

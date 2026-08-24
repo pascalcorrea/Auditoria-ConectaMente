@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { TopHeader } from '@/components/layout/TopHeader'
+import AdminHeader from './AdminHeader'
 import { ESTADOS_ACTIVOS } from '@/lib/asignacion'
 
 export const dynamic = 'force-dynamic'
@@ -28,7 +28,7 @@ export default async function AdminHome() {
 
   return (
     <>
-      <TopHeader title="Inicio" />
+      <AdminHeader title="Panel Principal" />
       <div className="flex-1 overflow-auto p-8">
         <div className="mb-1 text-xl font-semibold text-brand-text">Hola, equipo ConectaMente</div>
         <div className="mb-7 text-sm text-brand-textSecondary">Resumen de actividad de auditoría de licencias médicas</div>

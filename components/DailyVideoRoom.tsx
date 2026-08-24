@@ -1,36 +1,42 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Button } from './ui/Button'
 
 interface DailyVideoRoomProps {
   dailyRoomUrl: string
   userName: string
   casoId: string
-  medicoId: string
 }
 
-export function DailyVideoRoom({ dailyRoomUrl, userName, casoId, medicoId }: DailyVideoRoomProps) {
+export function DailyVideoRoom({ dailyRoomUrl, userName, casoId }: DailyVideoRoomProps) {
   const [consentGiven, setConsentGiven] = useState(false)
   const [sessionStarted, setSessionStarted] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
 
   const handleStartSession = async () => {
     if (!consentGiven) {
-      alert('Debe dar consentimiento para grabar')
+      setError('Debe dar consentimiento para grabar')
       return
     }
 
-    await fetch(`/api/medico/casos/${casoId}/sesion/consent`, {
-      method: 'POST',
-    })
+    try {
+      await fetch(`/api/medico/casos/${casoId}/sesion/consent`, { method: 'POST' })
+      setSessionStarted(true)
+      setError(null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al iniciar sesión')
+    }
+  }
 
-    setSessionStarted(true)
-
-    // MVP: Mock session (real Daily.co integration in Fase 3)
-    setTimeout(async () => {
+  const handleEndSession = async () => {
+    try {
       await fetch(`/api/medico/casos/${casoId}/sesion/end`, { method: 'POST' })
       setSessionStarted(false)
-    }, 60000) // Auto-end after 1 minute for demo
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al finalizar')
+    }
   }
 
   if (!sessionStarted) {
@@ -41,6 +47,7 @@ export function DailyVideoRoom({ dailyRoomUrl, userName, casoId, medicoId }: Dai
           <p className="text-sm text-brand-textSecondary mb-4">
             Confirma que tienes consentimiento del evaluado para grabar esta sesión.
           </p>
+          {error && <p className="text-sm text-brand-danger mb-4">{error}</p>}
           <label className="flex items-center gap-2 mb-4">
             <input
               type="checkbox"
@@ -59,12 +66,17 @@ export function DailyVideoRoom({ dailyRoomUrl, userName, casoId, medicoId }: Dai
   }
 
   return (
-    <div className="flex-1 flex items-center justify-center bg-brand-bgSecondary">
-      <div className="max-w-md text-center">
-        <h2 className="text-lg font-medium text-brand-text mb-4">Sesión de video en progreso</h2>
-        <p className="text-sm text-brand-textSecondary">
-          MVP: Daily.co integration coming in Fase 3. Session will auto-end in 1 minute.
-        </p>
+    <div className="flex-1 flex flex-col bg-black">
+      <iframe
+        ref={iframeRef}
+        src={`${dailyRoomUrl}?userName=${encodeURIComponent(userName)}`}
+        className="flex-1 w-full border-0"
+        allow="camera; microphone; display-capture"
+      />
+      <div className="p-4 bg-brand-bg border-t border-brand-borderSoft flex gap-2">
+        <Button onClick={handleEndSession} variant="secondary">
+          Finalizar sesión
+        </Button>
       </div>
     </div>
   )

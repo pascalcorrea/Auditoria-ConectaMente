@@ -21,6 +21,8 @@ export function NuevoCasoForm({ organizaciones }: { organizaciones: Organizacion
         <div className="grid grid-cols-2 gap-4">
           <Input label="RUT evaluado" name="rut" required />
           <Input label="Nombre evaluado" name="nombreEvaluado" required />
+          <Input label="Email evaluado" name="emailEvaluado" type="email" />
+          <Input label="Teléfono evaluado" name="telefonoEvaluado" type="tel" />
         </div>
       </div>
 
