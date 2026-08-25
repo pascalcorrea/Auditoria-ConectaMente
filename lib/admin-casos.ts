@@ -1,3 +1,4 @@
+import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import type { EstadoCaso, PrioridadCaso } from '@/lib/types'
 import type { Prisma } from '@prisma/client'
 ﻿import { prisma } from './prisma'

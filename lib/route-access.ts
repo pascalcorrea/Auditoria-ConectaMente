@@ -1,3 +1,4 @@
+import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import type { Rol } from '@prisma/client'
 
 const ROLE_PREFIXES: Array<{ prefix: string; role: Rol }> = [

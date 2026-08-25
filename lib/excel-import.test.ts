@@ -1,3 +1,4 @@
+import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import * as XLSX from 'xlsx'
 import { prisma } from './prisma'
 import { parseCasosExcel } from './excel-import'

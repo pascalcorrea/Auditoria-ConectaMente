@@ -1,3 +1,4 @@
+import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { prisma } from './prisma'
 

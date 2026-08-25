@@ -1,3 +1,4 @@
+import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import { prisma } from './prisma'
 
 export const ESTADOS_ACTIVOS = ['recibido', 'en_revision', 'informe_en_validacion'] as const

@@ -1,3 +1,4 @@
+import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import { describe, it, expect } from 'vitest'
 import type { Session } from 'next-auth'
 import { requireRole, requireOrgAccess, requireMedicoOwnership } from './security'

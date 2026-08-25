@@ -1,3 +1,4 @@
+import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 const FIRMA_PROVIDER = process.env.FIRMA_PROVIDER || 'mock'
 const FIRMA_API_KEY = process.env.FIRMA_API_KEY
 const FIRMA_API_URL = process.env.FIRMA_API_URL

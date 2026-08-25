@@ -1,3 +1,4 @@
+import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 import { handleRecordingReady } from '@/lib/daily-recording'
 

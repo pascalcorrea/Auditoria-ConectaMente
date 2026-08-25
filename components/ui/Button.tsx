@@ -1,3 +1,4 @@
+import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import { ButtonHTMLAttributes } from 'react'
 
 type Variant = 'primary' | 'secondary' | 'danger'

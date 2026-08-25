@@ -1,3 +1,4 @@
+import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 // Parses "fecha de emisión de la licencia" values from every place this
 // app accepts one (Excel/CSV import, the individual-entry server action,
 // and the bulk-import confirm route, which is an independent trust

@@ -1,3 +1,4 @@
+import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import type { ReactNode } from 'react'
 import { Sidebar, type NavSection } from '@/components/layout/Sidebar'
 

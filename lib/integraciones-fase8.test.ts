@@ -1,3 +1,4 @@
+import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { firmarInforme } from './firma-electronica'
 import { enviarEmail } from './notificaciones'

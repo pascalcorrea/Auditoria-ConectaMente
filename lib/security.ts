@@ -1,3 +1,4 @@
+import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import type { Session } from 'next-auth'
 
 export function requireRole(session: Session | null, ...roles: string[]): boolean {

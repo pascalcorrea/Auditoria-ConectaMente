@@ -1,3 +1,4 @@
+import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import type { ReactNode } from 'react'
 import AdminSidebar from './AdminSidebar'
 import styles from './admin.module.css'

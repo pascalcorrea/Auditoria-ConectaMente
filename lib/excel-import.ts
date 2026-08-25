@@ -1,3 +1,4 @@
+import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import * as XLSX from 'xlsx'
 import { isValidRut } from './rut'
 import { parseFechaEmision } from './fecha-emision'

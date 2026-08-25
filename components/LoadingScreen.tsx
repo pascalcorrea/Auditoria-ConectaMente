@@ -1,3 +1,4 @@
+import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 export function LoadingScreen() {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
