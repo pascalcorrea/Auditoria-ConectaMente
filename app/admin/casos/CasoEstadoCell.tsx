@@ -11,8 +11,8 @@ export default function CasoEstadoCell({ casoId, estadoActual }: { casoId: strin
 
   const opciones = estadosOpciones.map((e: any) => ({
     value: e,
-    label: ESTADO_LABEL[e],
-    dot: ESTADO_DOT_COLOR[e],
+    label: ESTADO_LABEL[e as keyof typeof ESTADO_LABEL],
+    dot: ESTADO_DOT_COLOR[e as keyof typeof ESTADO_DOT_COLOR],
   }))
 
   async function handleChange(nuevoEstado: string) {
