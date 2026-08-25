@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       const fechaEmisionLicencia = parseFechaEmision(fila.fechaEmision)
       if (!fechaEmisionLicencia) continue
 
-      const organizacion = organizacionPorNombre.get(fila.organizacion)
+      const organizacion = organizacionPorNombre.get(fila.organizacion) as any
       if (!organizacion) continue
 
       const fechaIngreso = new Date()
