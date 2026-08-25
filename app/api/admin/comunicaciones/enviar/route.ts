@@ -3,7 +3,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { sendWhatsAppTemplate, sendWhatsAppText } from '@/lib/comunicaciones/whatsapp'
 import { sendEmailBrevo } from '@/lib/comunicaciones/email'
-import type { CanalEnvio, EstadoEnvio } from '@prisma/client'
+import type { CanalEnvio, EstadoEnvio } from '@/lib/types'
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions)
