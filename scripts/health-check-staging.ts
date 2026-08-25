@@ -17,9 +17,13 @@ async function checkHealth(): Promise<boolean> {
   try {
     console.log(`\n🏥 Health Check: ${STAGING_URL}\n`)
 
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000)
+
     const res = await fetch(`${STAGING_URL}/api/health`, {
-      timeout: 10000,
+      signal: controller.signal,
     })
+    clearTimeout(timeoutId)
 
     if (!res.ok) {
       console.error(`❌ HTTP ${res.status}`)

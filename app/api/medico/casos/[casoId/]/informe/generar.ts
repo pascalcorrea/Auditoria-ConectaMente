@@ -58,7 +58,6 @@ export async function POST(
         archivoUrl: pdfUrl,
         generadoEn: new Date(),
         generadoPor: session.user.id,
-        contenido: JSON.stringify(body),
       },
     })
 

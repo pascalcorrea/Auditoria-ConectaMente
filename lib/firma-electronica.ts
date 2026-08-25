@@ -13,7 +13,7 @@ export interface SigningResponse {
   documentId: string
   signatureUrl: string
   signedAt: Date
-  provider: string
+  provider: 'firmaweb' | 'sovos' | 'otro'
 }
 
 interface FirmaProvider {
@@ -27,7 +27,7 @@ class FirmaWebProvider implements FirmaProvider {
     }
 
     const formData = new FormData()
-    formData.append('documento', new Blob([buffer]), 'documento.pdf')
+    formData.append('documento', new Blob([new Uint8Array(buffer)]), 'documento.pdf')
     formData.append('rut', metadata.rut)
     formData.append('nombre', metadata.nombre)
 
@@ -77,7 +77,7 @@ export async function requestSignature(req: SigningRequest): Promise<SigningResp
       documentId: `doc_${Date.now()}`,
       signatureUrl: `${req.documentUrl}?signed=true`,
       signedAt: new Date(),
-      provider: 'mock',
+      provider: 'otro',
     }
   }
 
@@ -85,7 +85,7 @@ export async function requestSignature(req: SigningRequest): Promise<SigningResp
     documentId: `${FIRMA_PROVIDER}_${Date.now()}`,
     signatureUrl: `${req.documentUrl}?signed=true&provider=${FIRMA_PROVIDER}`,
     signedAt: new Date(),
-    provider: FIRMA_PROVIDER,
+    provider: FIRMA_PROVIDER as 'firmaweb' | 'sovos' | 'otro',
   }
 }
 

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { createDailyRoom, getDailyRoomUrl } from '@/lib/daily'
+import { createRoom, getRoom } from '@/lib/daily'
 
 export async function GET(
   req: NextRequest,
@@ -31,15 +31,17 @@ export async function GET(
 
     let roomUrl = caso.sesion.dailyRoomUrl
     if (!roomUrl) {
-      roomUrl = await createDailyRoom(casoId)
+      const roomData = await createRoom(casoId)
+      roomUrl = roomData.url
       await prisma.sesion.update({
         where: { id: caso.sesion.id },
         data: { dailyRoomUrl: roomUrl },
       })
     } else {
-      const currentUrl = await getDailyRoomUrl(casoId)
-      if (!currentUrl) {
-        roomUrl = await createDailyRoom(casoId)
+      const roomData = await getRoom(casoId)
+      if (!roomData) {
+        const newRoomData = await createRoom(casoId)
+        roomUrl = newRoomData.url
         await prisma.sesion.update({
           where: { id: caso.sesion.id },
           data: { dailyRoomUrl: roomUrl },

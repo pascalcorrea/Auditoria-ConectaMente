@@ -104,6 +104,7 @@ model Organizacion {
   plazoSlaDias   Int
   creadoEn       DateTime         @default(now())
   tarifaCasoClp  Int?
+  contactEmail   String?
 
   usuarios Usuario[]
   casos    Caso[]
@@ -163,7 +164,7 @@ model Informe {
   archivoUrl        String
   generadoEn        DateTime       @default(now())
   generadoPor       String
-  firmaProveedor    FirmaProveedor
+  firmaProveedor    FirmaProveedor?
   firmaTimestamp    DateTime?
   firmaDocumentoId  String?
   archivoFirmadoUrl String?
