@@ -1,5 +1,4 @@
 import { prisma } from '@/lib/prisma'
-import type { Prisma } from '@prisma/client'
 
 const TARIFA_ORGANIZACION_DEFAULT_CLP = 100000 // tarifa default
 

@@ -1,10 +1,10 @@
-import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
 if (process.env.NODE_ENV === 'production') {
   throw new Error('El seed contiene datos de prueba — no ejecutar en producción')
 }
 
+const PrismaClient = require('@prisma/client').PrismaClient
 const prisma = new PrismaClient()
 
 async function main() {
