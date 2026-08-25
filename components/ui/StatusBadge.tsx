@@ -1,4 +1,4 @@
-import type { EstadoCaso, PrioridadCaso } from '@prisma/client'
+import type { EstadoCaso, PrioridadCaso } from '@/lib/types'
 
 type Tono = 'positivo' | 'neutral' | 'negativo' | 'inactivo'
 

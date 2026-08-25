@@ -1,6 +1,6 @@
+import type { EstadoCaso, PrioridadCaso } from '@/lib/types'
 ﻿import { getServerSession } from 'next-auth'
 import { notFound } from 'next/navigation'
-import { EstadoCaso } from '@prisma/client'
 import { authOptions } from '@/lib/auth'
 import { construirWhereCasos } from '@/lib/admin-casos'
 import { prisma } from '@/lib/prisma'
@@ -38,7 +38,7 @@ export default async function AdminCumplimientoPage({
       where,
       {
         estado: {
-          not: EstadoCaso.entregado,
+          not: 'entregado' as EstadoCaso,
         },
       },
     ],

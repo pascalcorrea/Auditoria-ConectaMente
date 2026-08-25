@@ -1,3 +1,4 @@
+import type { EstadoCaso, PrioridadCaso } from '@/lib/types'
 import { render, screen } from '@testing-library/react'
 import { EstadoBadge, PrioridadBadge } from './StatusBadge'
 

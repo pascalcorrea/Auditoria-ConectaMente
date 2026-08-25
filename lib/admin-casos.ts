@@ -1,5 +1,6 @@
+import type { EstadoCaso, PrioridadCaso } from '@/lib/types'
+import type { Prisma } from '@prisma/client'
 ﻿import { prisma } from './prisma'
-import type { Prisma, EstadoCaso, PrioridadCaso } from '@prisma/client'
 
 export interface MedicoConCarga {
   id: string

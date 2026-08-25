@@ -1,9 +1,10 @@
+import type { EstadoCaso, PrioridadCaso } from '@/lib/types'
 'use client'
 
 import { cambiarEstadoCaso } from './actions'
 import { StatusDropdown } from '@/components/ui/StatusDropdown'
 import { ESTADO_DOT_COLOR, ESTADO_LABEL } from '@/components/ui/StatusBadge'
-import type { EstadoCaso } from '@prisma/client'
+
 
 export default function CasoEstadoCell({ casoId, estadoActual }: { casoId: string; estadoActual: EstadoCaso }) {
   const estadosOpciones: EstadoCaso[] = ['recibido', 'en_revision', 'informe_en_validacion', 'entregado']

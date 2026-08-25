@@ -1,3 +1,4 @@
+import type { EstadoCaso, PrioridadCaso } from '@/lib/types'
 import { getServerSession } from 'next-auth'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -8,7 +9,6 @@ import { Select } from '@/components/ui/Select'
 import { Button } from '@/components/ui/Button'
 import { EstadoBadge, PrioridadBadge } from '@/components/ui/StatusBadge'
 import { TopHeader } from '@/components/layout/TopHeader'
-import type { EstadoCaso } from '@prisma/client'
 
 const ESTADOS: { value: EstadoCaso | ''; label: string }[] = [
   { value: '', label: 'Todos' },
