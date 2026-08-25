@@ -39,6 +39,10 @@
     "node_modules",
     "**/*.test.ts",
     "**/*.test.tsx",
-    "lib/**/*.test.ts"
+    "lib/**/*.test.ts",
+    "lib/contable/facturas.ts",
+    "lib/contable/pagos-medico.ts",
+    "lib/medico-sesion.ts",
+    "prisma/seed.ts"
   ]
 }
