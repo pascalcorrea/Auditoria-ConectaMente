@@ -73,6 +73,6 @@ export async function getAnalyticsMetrics(): Promise<AnalyticsMetrics> {
     casosEnProgreso,
     casosVencidos,
     tiempoPromedio: tiempoPromedio ? Math.round(tiempoPromedio * 10) / 10 : null,
-    cargaMedicos: cargaMedicosFormattedWithStats.sort((a, b) => b.casosAsignados - a.casosAsignados),
+    cargaMedicos: cargaMedicosFormattedWithStats.sort((a: any, b: any) => b.casosAsignados - a.casosAsignados),
   }
 }
