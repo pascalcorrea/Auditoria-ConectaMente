@@ -35,7 +35,7 @@ export default async function AdminUsuariosPage() {
             </tr>
           </thead>
           <tbody>
-            {usuarios.map((u) => (
+            {usuarios.map((u: any) => (
               <tr key={u.id} className="border-t border-brand-borderSoft">
                 <td className="p-3">{u.nombre}</td>
                 <td className="p-3">{u.email}</td>
