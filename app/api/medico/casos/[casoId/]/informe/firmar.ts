@@ -33,7 +33,7 @@ export async function POST(
       documentUrl: informe.archivoUrl,
       signerName: session.user.name || 'Médico',
       signerEmail: session.user.email || '',
-      signerRut: session.user.rut || '',
+      signerRut: session.user.id || '',
     })
 
     const updated = await prisma.informe.update({
