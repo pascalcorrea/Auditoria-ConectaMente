@@ -1,4 +1,2 @@
-/** @type {import('@prisma/internals').GetConfig} */
-module.exports = {
-  datasourceUrl: () => process.env.DATABASE_URL,
-}
+// Prisma v7 config - URL managed in lib/prisma.ts via PrismaClient adapter
+module.exports = {}
