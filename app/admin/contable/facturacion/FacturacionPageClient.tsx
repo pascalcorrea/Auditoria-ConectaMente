@@ -3,7 +3,14 @@
 import { useEffect, useState } from 'react'
 import { ESTADO_FACTURA_LABEL, ESTADO_FACTURA_TONO, TONO_CLASSES } from '@/components/ui/StatusBadge'
 
-type FacturaDetalle = FacturaOrganizacion & { organizacion: { nombre: string } }
+type FacturaDetalle = {
+  id: string
+  estado: string
+  casosIncluidos: number
+  montoClp: number
+  creadoEn: Date
+  organizacion: { nombre: string }
+}
 
 type Props = {
   organizaciones: Array<{ id: string; nombre: string }>

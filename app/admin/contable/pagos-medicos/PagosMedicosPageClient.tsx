@@ -3,7 +3,13 @@
 import { useEffect, useState } from 'react'
 import { ESTADO_PAGO_LABEL, ESTADO_PAGO_TONO, TONO_CLASSES } from '@/components/ui/StatusBadge'
 
-type PagoDetalle = PagoMedico & { medico: { nombre: string }; caso: { nombreEvaluado: string } }
+type PagoDetalle = {
+  id: string
+  estado: string
+  montoClp: number
+  medico: { nombre: string }
+  caso: { nombreEvaluado: string }
+}
 
 type Props = {
   medicos: Array<{ id: string; nombre: string }>

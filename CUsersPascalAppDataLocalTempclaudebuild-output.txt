@@ -1,0 +1,24 @@
+
+> core-fase0-setup@0.1.0 build
+> next build
+
+   ▲ Next.js 15.5.23
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 12.0s
+   Skipping linting
+   Checking validity of types ...
+Failed to compile.
+
+./app/admin/comunicaciones/HistorialEnvios.tsx:80:17
+Type error: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Record<Tono, string>'.
+
+[0m [90m 78 |[39m             [33m<[39m[33mspan[39m
+ [90m 79 |[39m               className[33m=[39m{[32m`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${[39m
+[31m[1m>[22m[39m[90m 80 |[39m [32m                TONO_CLASSES[ESTADO_ENVIO_TONO[log.estado]][39m
+ [90m    |[39m                 [31m[1m^[22m[39m
+ [90m 81 |[39m [32m              }`[39m}
+ [90m 82 |[39m             [33m>[39m
+ [90m 83 |[39m               {[33mESTADO_ENVIO_LABEL[39m[log[33m.[39mestado]}[0m
+Next.js build worker exited with code: 1 and signal: null

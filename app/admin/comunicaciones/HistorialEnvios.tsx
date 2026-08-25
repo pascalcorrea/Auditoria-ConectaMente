@@ -77,10 +77,10 @@ export default function HistorialEnvios({ refetchTrigger }: { refetchTrigger: nu
           <div>
             <span
               className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
-                TONO_CLASSES[ESTADO_ENVIO_TONO[log.estado]]
+                TONO_CLASSES[ESTADO_ENVIO_TONO[log.estado as keyof typeof ESTADO_ENVIO_TONO]]
               }`}
             >
-              {ESTADO_ENVIO_LABEL[log.estado]}
+              {ESTADO_ENVIO_LABEL[log.estado as keyof typeof ESTADO_ENVIO_LABEL]}
             </span>
           </div>
           <div className="text-sm tabular-nums text-brand-textMuted">
