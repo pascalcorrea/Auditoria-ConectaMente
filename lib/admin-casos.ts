@@ -1,6 +1,13 @@
 ﻿import { prisma } from './prisma'
 import type { Prisma, EstadoCaso, PrioridadCaso } from '@prisma/client'
 
+export interface MedicoConCarga {
+  id: string
+  nombre: string
+  especialidad: string | null
+  casosActivos: number
+}
+
 export interface FiltrosCasos {
   desde?: string
   hasta?: string
@@ -39,7 +46,7 @@ export async function listarTodosCasos() {
   })
 }
 
-export async function obtenerCargaMedicos() {
+export async function obtenerCargaMedicos(): Promise<MedicoConCarga[]> {
   const medicos = await prisma.usuario.findMany({
     where: { rol: 'medico', activo: true },
     select: { id: true, nombre: true, especialidad: true },

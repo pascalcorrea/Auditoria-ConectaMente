@@ -1,6 +1,21 @@
 import { prisma } from './prisma'
 
-export async function getAnalyticsMetrics() {
+export type AnalyticsMetrics = {
+  totalCasos: number
+  casosCompletados: number
+  casosEnProgreso: number
+  casosVencidos: number
+  tiempoPromedio: number | null
+  cargaMedicos: Array<{
+    usuarioId: string
+    nombre: string
+    casosAsignados: number
+    casosCompletados: number
+    porcentajeCompletado: number
+  }>
+}
+
+export async function getAnalyticsMetrics(): Promise<AnalyticsMetrics> {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 

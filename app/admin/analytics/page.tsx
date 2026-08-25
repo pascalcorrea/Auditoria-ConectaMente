@@ -58,7 +58,7 @@ export default async function AdminAnalyticsPage() {
               </tr>
             </thead>
             <tbody>
-              {metrics.cargaMedicos.map((medico) => (
+              {metrics.cargaMedicos.map((medico: typeof metrics.cargaMedicos[0]) => (
                 <tr key={medico.usuarioId} className="border-t border-brand-borderSoft">
                   <td className="p-3">{medico.nombre}</td>
                   <td className="p-3 text-right">{medico.casosAsignados}</td>

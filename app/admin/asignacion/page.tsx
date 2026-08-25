@@ -41,7 +41,7 @@ export default async function AdminAsignacionPage() {
             </tr>
           </thead>
           <tbody>
-            {medicos.map((m) => (
+            {medicos.map((m: typeof medicos[0]) => (
               <tr key={m.id} className="border-t border-brand-borderSoft">
                 <td className="py-2">{m.nombre}</td>
                 <td className="py-2">{m.especialidad || '—'}</td>
@@ -59,8 +59,8 @@ export default async function AdminAsignacionPage() {
             name="casoId"
             label="Caso"
             options={todos
-              .filter((c) => c.estado !== 'entregado')
-              .map((c) => ({ value: c.id, label: `${c.nombreEvaluado} (${c.organizacion.nombre})` }))}
+              .filter((c: typeof todos[0]) => c.estado !== 'entregado')
+              .map((c: typeof todos[0]) => ({ value: c.id, label: `${c.nombreEvaluado} (${c.organizacion.nombre})` }))}
             required
           />
           <Select

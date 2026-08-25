@@ -8,7 +8,7 @@ import { createRoom } from '@/lib/daily'
 import { ameliaGetSlots, ameliaGetCustomers, ameliaCreateCustomer, ameliaAdminCreateAppointmentDirect, ameliaTriggerGcalSync, buildAppointmentCustomFields } from '@/lib/amelia'
 import { sendEmailBrevo } from '@/lib/comunicaciones/email'
 import { sendWhatsAppText } from '@/lib/comunicaciones/whatsapp'
-import type { EstadoCaso } from '@prisma/client'
+type EstadoCaso = 'recibido' | 'en_revision' | 'informe_en_validacion' | 'entregado'
 
 export async function cambiarEstadoCaso(casoId: string, estado: EstadoCaso) {
   const session = await getServerSession(authOptions)
