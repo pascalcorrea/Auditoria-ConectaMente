@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { ESTADO_FACTURA_LABEL, ESTADO_FACTURA_TONO, TONO_CLASSES } from '@/components/ui/StatusBadge'
-import type { FacturaOrganizacion } from '@prisma/client'
 
 type FacturaDetalle = FacturaOrganizacion & { organizacion: { nombre: string } }
 

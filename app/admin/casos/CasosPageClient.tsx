@@ -6,7 +6,6 @@ import { DateRangeFilter } from '@/components/ui/DateRangeFilter'
 import CasoEstadoCell from './CasoEstadoCell'
 import SesionDrawer from './SesionDrawer'
 import { PrioridadBadge } from '@/components/ui/StatusBadge'
-import type { Caso, Organizacion, Usuario, Sesion, Informe } from '@prisma/client'
 
 interface CasosPageClientProps {
   casos: (Caso & { organizacion: Organizacion; medico: Usuario | null })[]

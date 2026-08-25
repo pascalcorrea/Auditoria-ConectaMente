@@ -6,7 +6,6 @@ import { Drawer } from '@/components/ui/Drawer'
 import { Input } from '@/components/ui/Input'
 import { EstadoBadge, PrioridadBadge } from '@/components/ui/StatusBadge'
 import { agendarSesion, obtenerSlotsDisponibles } from './actions'
-import type { Caso, Sesion, Usuario, Organizacion } from '@prisma/client'
 
 type Props = {
   caso: Caso & { sesion: Sesion | null; organizacion: Organizacion; medico: Usuario | null }
