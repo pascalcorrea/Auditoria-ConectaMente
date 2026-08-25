@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { createDailyRoom } from '@/lib/daily'
+import { createRoom } from '@/lib/daily'
 import { ameliaGetSlots, ameliaGetCustomers, ameliaCreateCustomer, ameliaAdminCreateAppointmentDirect, ameliaTriggerGcalSync, buildAppointmentCustomFields } from '@/lib/amelia'
 import { sendEmailBrevo } from '@/lib/comunicaciones/email'
 import { sendWhatsAppText } from '@/lib/comunicaciones/whatsapp'
@@ -106,7 +106,7 @@ export async function agendarSesion(
       return { error: 'Email evaluado requerido para crear cita' }
     }
 
-    const dailyRoomUrl = await createDailyRoom(casoId)
+    const dailyRoomUrl = await createRoom(casoId)
     const bookingStart = `${fechaYMD} ${hora}`
     const bookingEnd = new Date(new Date(`${fechaYMD}T${hora}:00`).getTime() + 3600000).toLocaleString('sv-SE', { timeZone: 'America/Santiago' }).slice(0, 16)
 
