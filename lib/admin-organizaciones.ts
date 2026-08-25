@@ -1,5 +1,5 @@
 import { prisma } from './prisma'
-import { TipoOrganizacion } from '@prisma/client'
+import type { TipoOrganizacion } from '@/lib/types'
 
 export async function listarOrganizaciones() {
   return prisma.organizacion.findMany({
