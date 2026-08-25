@@ -34,7 +34,7 @@ export function Sidebar({ nav }: { nav: NavSection[] }) {
                 {sec.section}
               </div>
             )}
-            {sec.items.map((item) => {
+            {sec.items.map((item: any) => {
               const active = isActive(item.href)
               return (
                 <Link

@@ -11,7 +11,7 @@ export async function asignarMedico(): Promise<string | null> {
   if (medicos.length === 0) return null
 
   const cargas = await Promise.all(
-    medicos.map(async (medico) => ({
+    medicos.map(async (medico: any) => ({
       medicoId: medico.id,
       carga: await prisma.caso.count({
         where: { medicoId: medico.id, estado: { in: [...ESTADOS_ACTIVOS] } },
@@ -19,7 +19,7 @@ export async function asignarMedico(): Promise<string | null> {
     }))
   )
 
-  cargas.sort((a, b) => a.carga - b.carga)
+  cargas.sort((a: any, b) => a.carga - b.carga)
 
   return cargas[0].medicoId
 }

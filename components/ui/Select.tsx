@@ -24,7 +24,7 @@ export function Select({ label, options, id, className = '', ...rest }: SelectPr
         className={`rounded-lg border border-brand-border bg-brand-bg px-3 py-2.5 text-sm text-brand-text outline-none transition focus:border-brand-accent focus:bg-white focus:ring-2 focus:ring-brand-accent/20 ${className}`}
         {...rest}
       >
-        {options.map((opt) => (
+        {options.map((opt: any) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}
           </option>

@@ -87,7 +87,7 @@ export function StatusDropdown({ value, options, onChange, disabled = false }: S
             minWidth: '200px',
           }}
         >
-          {options.map((option) => (
+          {options.map((option: any) => (
             <button
               key={option.value}
               onClick={() => handleSelect(option.value)}

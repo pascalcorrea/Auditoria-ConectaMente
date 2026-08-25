@@ -221,7 +221,7 @@ export function DateRangeFilter({ from, to, onChange, label = 'Período' }: Date
 
           {/* Day Names */}
           <div className="grid grid-cols-7 gap-1 mb-2">
-            {dayNames.map((name) => (
+            {dayNames.map((name: any) => (
               <div key={name} className="text-center text-xs font-medium text-brand-textSecondary h-6 flex items-center justify-center">
                 {name}
               </div>
@@ -230,7 +230,7 @@ export function DateRangeFilter({ from, to, onChange, label = 'Período' }: Date
 
           {/* Calendar Grid */}
           <div className="grid grid-cols-7 gap-1">
-            {calendarDays.map((day) => {
+            {calendarDays.map((day: any) => {
               const isStart = day.dateStr === start
               const isEnd = day.dateStr === end
               const isBetween = start && end && day.dateStr > start && day.dateStr < end
