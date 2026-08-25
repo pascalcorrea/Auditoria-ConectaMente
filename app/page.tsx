@@ -183,7 +183,7 @@ export default function LandingPage() {
             Únete a organizaciones de salud que confían en ConectaMente
           </p>
           <Link href="/login">
-            <Button>Acceder a Plataforma</Button>
+            <Button size="lg">Acceder a Plataforma</Button>
           </Link>
         </div>
       </section>
