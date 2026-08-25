@@ -6,8 +6,19 @@ export async function GET() {
     const version = process.env.npm_package_version || '0.1.0'
     const env = process.env.NODE_ENV || 'development'
 
-    const health = {
-      status: 'ok' as const,
+    const health: {
+      status: 'ok' | 'degraded' | 'error'
+      version: string
+      environment: string
+      timestamp: string
+      uptime: number
+      integrations: {
+        daily: string
+        brevo: string
+        firma: string
+      }
+    } = {
+      status: 'ok',
       version,
       environment: env,
       timestamp: new Date().toISOString(),
