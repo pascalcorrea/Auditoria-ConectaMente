@@ -1,0 +1,28 @@
+name: Update Node.js on VPS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-node:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Node.js to v22
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USER }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          script: |
+            echo "Checking current Node version..."
+            node -v || echo "Node not found"
+
+            echo "Installing Node.js v22..."
+            curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+
+            echo "Verifying Node installation..."
+            node -v
+            npm -v
+
+            echo "Node.js updated successfully!"
