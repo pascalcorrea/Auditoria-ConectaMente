@@ -75,7 +75,7 @@ export default function CasosPageClient({ casos, casoDetalle, params }: CasosPag
         {casos.length === 0 && (
           <div className="px-5 py-16 text-center text-sm text-brand-textMuted">Todavía no hay casos ingresados.</div>
         )}
-        {casos.map((caso) => (
+        {casos.map((caso: any) => (
           <div
             key={caso.id}
             onClick={() => handleRowClick(caso.id)}

@@ -15,7 +15,7 @@ describe('asignarMedico', () => {
       where: { rol: 'medico', activo: true },
       select: { id: true },
     })
-    preexistingMedicoIds = preexisting.map((m) => m.id)
+    preexistingMedicoIds = preexisting.map((m: any) => m.id)
     if (preexistingMedicoIds.length > 0) {
       await prisma.usuario.updateMany({
         where: { id: { in: preexistingMedicoIds } },

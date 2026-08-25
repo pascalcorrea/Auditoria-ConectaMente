@@ -55,7 +55,7 @@ export async function sendWhatsAppTemplate(params: SendWhatsAppTemplateParams): 
               ? [
                   {
                     type: 'body',
-                    parameters: Object.values(templateParams).map((val) => ({ type: 'text', text: val })),
+                    parameters: Object.values(templateParams).map((val: any) => ({ type: 'text', text: val })),
                   },
                 ]
               : undefined,

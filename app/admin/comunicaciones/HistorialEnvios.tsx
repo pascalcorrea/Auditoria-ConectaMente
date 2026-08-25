@@ -65,7 +65,7 @@ export default function HistorialEnvios({ refetchTrigger }: { refetchTrigger: nu
           Fecha
         </div>
       </div>
-      {logs.map((log) => (
+      {logs.map((log: any) => (
         <div
           key={log.id}
           className="grid grid-cols-[1fr_1fr_1fr_1fr_1.2fr_1fr] items-center border-t border-brand-borderSoft/70 px-5 py-3"

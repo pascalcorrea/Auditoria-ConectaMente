@@ -66,7 +66,7 @@ export default async function AdminAsignacionPage() {
           <Select
             name="medicoId"
             label="Asignar a"
-            options={medicos.map((m) => ({ value: m.id, label: `${m.nombre} (${m.casosActivos} casos)` }))}
+            options={medicos.map((m: any) => ({ value: m.id, label: `${m.nombre} (${m.casosActivos} casos)` }))}
             required
           />
           <Button type="submit">Reasignar</Button>

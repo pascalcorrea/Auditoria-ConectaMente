@@ -46,7 +46,7 @@ export async function guardarHorarioMedico(
     // Construir periods para Amelia
     const weekDayList = Object.entries(horario).map(([dia, franjas]) => ({
       dayIndex: DIA_MAP[dia as DiaSemana],
-      timeSlots: franjas.map((f) => ({
+      timeSlots: franjas.map((f: any) => ({
         startTime: f.horaInicio,
         endTime: f.horaFin,
       })),

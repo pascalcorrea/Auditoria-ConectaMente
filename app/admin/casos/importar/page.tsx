@@ -43,7 +43,7 @@ export default function ImportarCasosPage() {
 
   async function handleConfirmar() {
     if (!filas) return
-    const filasValidas = filas.filter((f) => f.errores.length === 0).map((f) => f.datos)
+    const filasValidas = filas.filter((f: any) => f.errores.length === 0).map((f: any) => f.datos)
 
     setLoading(true)
     setError(null)
@@ -77,7 +77,7 @@ export default function ImportarCasosPage() {
   }
 
   const hayFilasValidas = filas?.some((f) => f.errores.length === 0) ?? false
-  const filasValidasCount = filas?.filter((f) => f.errores.length === 0).length ?? 0
+  const filasValidasCount = filas?.filter((f: any) => f.errores.length === 0).length ?? 0
   const filasConErrorCount = filas ? filas.length - filasValidasCount : 0
 
   return (
@@ -136,7 +136,7 @@ export default function ImportarCasosPage() {
                 <div className="text-[10.5px] font-semibold uppercase tracking-wider text-brand-textSecondary">Organización</div>
                 <div className="text-[10.5px] font-semibold uppercase tracking-wider text-brand-textSecondary">Errores</div>
               </div>
-              {filas.map((fila) => (
+              {filas.map((fila: any) => (
                 <div
                   key={fila.numeroFila}
                   className={`grid grid-cols-[0.6fr_1.6fr_1.6fr_1.2fr_2fr] items-center border-t border-brand-borderSoft/70 px-5 py-3 ${fila.errores.length > 0 ? 'bg-brand-dangerSoft' : ''}`}

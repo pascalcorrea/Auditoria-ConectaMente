@@ -34,7 +34,7 @@ export default async function AdminHome() {
         <div className="mb-7 text-sm text-brand-textSecondary">Resumen de actividad de auditoría de licencias médicas</div>
 
         <div className="mb-8 flex gap-4">
-          {kpis.map((k) => (
+          {kpis.map((k: any) => (
             <div
               key={k.label}
               className="min-w-[160px] flex-1 rounded-xl border border-brand-borderSoft bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.03)]"
@@ -47,7 +47,7 @@ export default async function AdminHome() {
 
         <div className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-brand-textMuted">Accesos rápidos</div>
         <div className="grid grid-cols-4 gap-4">
-          {ENLACES.map((enlace) => (
+          {ENLACES.map((enlace: any) => (
             <a
               key={enlace.href}
               href={enlace.href}

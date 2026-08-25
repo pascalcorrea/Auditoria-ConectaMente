@@ -40,7 +40,7 @@ export async function sincronizarPagosPendientes() {
     include: { medico: { select: { tarifaCasoClp: true } } },
   })
 
-  const pagosACrear = casosEntregadosSinPago.map((caso) => ({
+  const pagosACrear = casosEntregadosSinPago.map((caso: any) => ({
     medicoId: caso.medicoId!,
     casoId: caso.id,
     montoClp: caso.medico!.tarifaCasoClp || TARIFA_MEDICO_DEFAULT_CLP,

@@ -51,7 +51,7 @@ export default async function CasosPage({
     <div className="flex-1 overflow-auto p-7">
       <div className="mb-5 flex items-center justify-between">
         <div className="flex gap-4">
-          {kpis.map((k) => (
+          {kpis.map((k: any) => (
             <div
               key={k.label}
               className="min-w-[130px] rounded-xl border border-brand-borderSoft bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.03)]"

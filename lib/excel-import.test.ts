@@ -109,6 +109,6 @@ describe('parseCasosExcel', () => {
     ])
 
     const filas = await parseCasosExcel(buffer)
-    expect(filas.map((f) => f.numeroFila)).toEqual([2, 3])
+    expect(filas.map((f: any) => f.numeroFila)).toEqual([2, 3])
   })
 })

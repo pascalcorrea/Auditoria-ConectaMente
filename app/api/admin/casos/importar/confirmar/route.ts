@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
   const filas: unknown[] = Array.isArray((body as { filas?: unknown })?.filas) ? (body as { filas: unknown[] }).filas : []
 
   const organizaciones = await prisma.organizacion.findMany()
-  const organizacionPorNombre = new Map(organizaciones.map((o) => [o.nombre, o]))
+  const organizacionPorNombre = new Map(organizaciones.map((o: any) => [o.nombre, o]))
 
   let creados = 0
 

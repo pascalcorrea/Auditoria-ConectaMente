@@ -53,9 +53,9 @@ export async function getAnalyticsMetrics(): Promise<AnalyticsMetrics> {
         }, 0) / casosEntregadosPorFechas.length
       : null
 
-  const cargaMedicosFormattedWithStats = cargaMedicos.map((medico) => {
+  const cargaMedicosFormattedWithStats = cargaMedicos.map((medico: any) => {
     const casosAsignados = medico.casosAsignados.length
-    const casosEntregados = medico.casosAsignados.filter((c) => c.estado === 'entregado').length
+    const casosEntregados = medico.casosAsignados.filter((c: any) => c.estado === 'entregado').length
     const porcentajeCompletado = casosAsignados > 0 ? Math.round((casosEntregados / casosAsignados) * 100) : 0
 
     return {

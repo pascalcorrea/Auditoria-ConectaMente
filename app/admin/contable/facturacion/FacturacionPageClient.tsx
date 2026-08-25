@@ -83,7 +83,7 @@ export default function FacturacionPageClient({ organizaciones }: Props) {
             className="rounded border border-brand-border px-2 py-2 text-sm"
           >
             <option value="">Seleccionar organización</option>
-            {organizaciones.map((o) => (
+            {organizaciones.map((o: any) => (
               <option key={o.id} value={o.id}>
                 {o.nombre}
               </option>
@@ -123,7 +123,7 @@ export default function FacturacionPageClient({ organizaciones }: Props) {
         {facturas.length === 0 && (
           <div className="p-4 text-center text-sm text-brand-textMuted">Sin facturas registradas</div>
         )}
-        {facturas.map((factura) => (
+        {facturas.map((factura: any) => (
           <div key={factura.id} className="grid grid-cols-[1.5fr_1fr_1fr_1fr_1.2fr] items-center border-t border-brand-borderSoft/70 px-5 py-3">
             <div className="text-sm text-brand-text">{factura.organizacion.nombre}</div>
             <div className="text-sm text-brand-textSecondary">{factura.casosIncluidos}</div>

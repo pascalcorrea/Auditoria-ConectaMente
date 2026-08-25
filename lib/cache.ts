@@ -12,7 +12,7 @@ export function getCachedOrFetch<T>(key: string, fetcher: () => Promise<T>, ttlS
 }
 
 export function invalidateCache(pattern: string) {
-  Array.from(cache.keys()).filter((key) => key.includes(pattern)).forEach((key) => cache.delete(key))
+  Array.from(cache.keys()).filter((key: any) => key.includes(pattern)).forEach((key: any) => cache.delete(key))
 }
 
 export function clearCache() {

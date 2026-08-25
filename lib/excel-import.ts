@@ -49,7 +49,7 @@ export async function parseCasosExcel(buffer: ArrayBuffer): Promise<FilaImportac
   const rows: Record<string, unknown>[] = XLSX.utils.sheet_to_json(sheet, { defval: '' })
 
   const organizaciones = await prisma.organizacion.findMany()
-  const nombresOrganizaciones = new Set(organizaciones.map((o) => o.nombre))
+  const nombresOrganizaciones = new Set(organizaciones.map((o: any) => o.nombre))
 
   return rows.map((row, index) => {
     const datos: FilaImportacion['datos'] = {

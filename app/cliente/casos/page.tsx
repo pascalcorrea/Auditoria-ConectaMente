@@ -47,7 +47,7 @@ export default async function ClienteCasosPage({
             label="Estado"
             name="estado"
             defaultValue={estado ?? ''}
-            options={ESTADOS.map((e) => ({ value: e.value, label: e.label }))}
+            options={ESTADOS.map((e: any) => ({ value: e.value, label: e.label }))}
           />
           <Button type="submit" variant="secondary">
             Filtrar
@@ -66,7 +66,7 @@ export default async function ClienteCasosPage({
           {casos.length === 0 && (
             <div className="px-5 py-16 text-center text-sm text-brand-textMuted">Todavía no tienes casos{estado ? ' con este estado' : ''}.</div>
           )}
-          {casos.map((caso) => (
+          {casos.map((caso: any) => (
             <div
               key={caso.id}
               className="grid grid-cols-[1.8fr_1.6fr_1.4fr_1fr_1fr_0.8fr] items-center border-t border-brand-borderSoft/70 px-5 py-3"

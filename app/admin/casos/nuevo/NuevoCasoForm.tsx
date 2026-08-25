@@ -34,7 +34,7 @@ export function NuevoCasoForm({ organizaciones }: { organizaciones: Organizacion
             label="Organización"
             name="organizacionId"
             required
-            options={organizaciones.map((o) => ({ value: o.id, label: o.nombre }))}
+            options={organizaciones.map((o: any) => ({ value: o.id, label: o.nombre }))}
           />
           <Input label="Tipo de licencia" name="tipoLicencia" required />
           <Input label="Fecha de emisión" name="fechaEmisionLicencia" type="date" required />

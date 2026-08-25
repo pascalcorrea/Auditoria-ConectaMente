@@ -9,7 +9,7 @@ import { ESTADO_DOT_COLOR, ESTADO_LABEL } from '@/components/ui/StatusBadge'
 export default function CasoEstadoCell({ casoId, estadoActual }: { casoId: string; estadoActual: EstadoCaso }) {
   const estadosOpciones: EstadoCaso[] = ['recibido', 'en_revision', 'informe_en_validacion', 'entregado']
 
-  const opciones = estadosOpciones.map((e) => ({
+  const opciones = estadosOpciones.map((e: any) => ({
     value: e,
     label: ESTADO_LABEL[e],
     dot: ESTADO_DOT_COLOR[e],

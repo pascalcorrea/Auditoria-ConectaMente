@@ -51,7 +51,7 @@ export default function PagosMedicosPageClient({ medicos }: Props) {
       })
 
       if (res.ok) {
-        setPagos(pagos.map((p) => (p.id === pagoId ? { ...p, estado: 'pagado' } : p)))
+        setPagos(pagos.map((p: any) => (p.id === pagoId ? { ...p, estado: 'pagado' } : p)))
       }
     } catch (err) {
       console.error('Error marking pago:', err)
@@ -68,7 +68,7 @@ export default function PagosMedicosPageClient({ medicos }: Props) {
           className="rounded border border-brand-border px-2 py-1 text-sm"
         >
           <option value="">Todos los médicos</option>
-          {medicos.map((m) => (
+          {medicos.map((m: any) => (
             <option key={m.id} value={m.id}>
               {m.nombre}
             </option>
@@ -97,7 +97,7 @@ export default function PagosMedicosPageClient({ medicos }: Props) {
         {pagos.length === 0 && (
           <div className="p-4 text-center text-sm text-brand-textMuted">Sin pagos registrados</div>
         )}
-        {pagos.map((pago) => (
+        {pagos.map((pago: any) => (
           <div key={pago.id} className="grid grid-cols-[1.5fr_1.5fr_1fr_1fr_1.2fr] items-center border-t border-brand-borderSoft/70 px-5 py-3">
             <div className="text-sm text-brand-text">{pago.medico.nombre}</div>
             <div className="text-sm text-brand-textSecondary">{pago.caso.nombreEvaluado}</div>

@@ -105,7 +105,7 @@ export default function ComunicacionesForm({ usuarios, casos, onEnviado }: Props
             label="Seleccionar usuario"
             value={usuarioId}
             onChange={(e) => setUsuarioId(e.target.value)}
-            options={usuarios.map((u) => ({
+            options={usuarios.map((u: any) => ({
               label: `${u.nombre} (${u.rol})`,
               value: u.id,
             }))}
@@ -126,7 +126,7 @@ export default function ComunicacionesForm({ usuarios, casos, onEnviado }: Props
           onChange={(e) => setCasoId(e.target.value)}
           options={[
             { label: 'Sin caso', value: '' },
-            ...casos.map((c) => ({
+            ...casos.map((c: any) => ({
               label: `${c.nombreEvaluado} - ${c.organizacion.nombre}`,
               value: c.id,
             })),

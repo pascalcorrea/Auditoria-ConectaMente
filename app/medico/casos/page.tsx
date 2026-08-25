@@ -27,7 +27,7 @@ export default async function MedicoCasosPage() {
           </tr>
         </thead>
         <tbody>
-          {casos.map((caso) => (
+          {casos.map((caso: any) => (
             <tr key={caso.id} className="border-t border-brand-borderSoft">
               <td className="py-2">{caso.nombreEvaluado} ({caso.rutEvaluado})</td>
               <td className="py-2">{caso.estado}</td>

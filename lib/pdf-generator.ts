@@ -54,7 +54,7 @@ export async function generatePDFBuffer(data: PDFData): Promise<Buffer> {
         sections.push({ title: 'Observaciones', content: data.observaciones })
       }
 
-      sections.forEach((section) => {
+      sections.forEach((section: any) => {
         doc.fontSize(12).font('Helvetica-Bold').text(section.title)
         doc.fontSize(10).font('Helvetica').text(section.content, { align: 'justify' })
         doc.moveDown(0.5)
