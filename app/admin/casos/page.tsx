@@ -36,9 +36,9 @@ export default async function CasosPage({
     })
   }
 
-  const activos = casos.filter((c) => (ESTADOS_ACTIVOS as readonly string[]).includes(c.estado)).length
-  const urgentes = casos.filter((c) => c.prioridad === 'urgente' && (ESTADOS_ACTIVOS as readonly string[]).includes(c.estado)).length
-  const sinAsignar = casos.filter((c) => !c.medicoId && (ESTADOS_ACTIVOS as readonly string[]).includes(c.estado)).length
+  const activos = casos.filter((c: any) => (ESTADOS_ACTIVOS as readonly string[]).includes(c.estado)).length
+  const urgentes = casos.filter((c: any) => c.prioridad === 'urgente' && (ESTADOS_ACTIVOS as readonly string[]).includes(c.estado)).length
+  const sinAsignar = casos.filter((c: any) => !c.medicoId && (ESTADOS_ACTIVOS as readonly string[]).includes(c.estado)).length
 
   const kpis = [
     { label: 'Total', value: casos.length, color: 'text-brand-text' },
