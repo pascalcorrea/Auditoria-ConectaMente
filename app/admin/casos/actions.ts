@@ -1,6 +1,6 @@
-import type { EstadoCaso, PrioridadCaso } from '@/lib/types'
 'use server'
 
+import type { EstadoCaso, PrioridadCaso } from '@/lib/types'
 import { revalidatePath } from 'next/cache'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'

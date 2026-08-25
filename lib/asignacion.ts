@@ -19,7 +19,7 @@ export async function asignarMedico(): Promise<string | null> {
     }))
   )
 
-  cargas.sort((a: any, b) => a.carga - b.carga)
+  cargas.sort((a: any, b: any) => a.carga - b.carga)
 
   return cargas[0].medicoId
 }

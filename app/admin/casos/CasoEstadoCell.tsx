@@ -1,6 +1,6 @@
-import type { EstadoCaso, PrioridadCaso } from '@/lib/types'
 'use client'
 
+import type { EstadoCaso, PrioridadCaso } from '@/lib/types'
 import { cambiarEstadoCaso } from './actions'
 import { StatusDropdown } from '@/components/ui/StatusDropdown'
 import { ESTADO_DOT_COLOR, ESTADO_LABEL } from '@/components/ui/StatusBadge'
