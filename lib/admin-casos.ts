@@ -64,7 +64,7 @@ export async function obtenerCargaMedicos(): Promise<MedicoConCarga[]> {
     })
   )
 
-  return cargaPorMedico.sort((a, b) => a.casosActivos - b.casosActivos)
+  return cargaPorMedico.sort((a: any, b: any) => a.casosActivos - b.casosActivos)
 }
 
 export async function reasignarCaso(casoId: string, nuevoMedicoId: string) {
