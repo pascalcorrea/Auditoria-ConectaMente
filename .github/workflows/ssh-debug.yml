@@ -1,0 +1,37 @@
+name: SSH Debug
+
+on:
+  workflow_dispatch:
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test SSH Connection
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USER }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          timeout: 10m
+          command_timeout: 5m
+          script: |
+            echo "✅ SSH Connection successful!"
+            echo "Current user: $(whoami)"
+            echo "Hostname: $(hostname)"
+            echo "Working directory: $(pwd)"
+            echo ""
+            echo "=== System Info ==="
+            uname -a
+            echo ""
+            echo "=== Node & npm ==="
+            node -v || echo "Node not found"
+            npm -v || echo "npm not found"
+            echo ""
+            echo "=== /var/www/app status ==="
+            ls -la /var/www/app 2>/dev/null || echo "/var/www/app does not exist"
+            echo ""
+            echo "=== PM2 status ==="
+            pm2 status 2>/dev/null || echo "PM2 not initialized"
+            echo ""
+            echo "✅ Debug complete"
