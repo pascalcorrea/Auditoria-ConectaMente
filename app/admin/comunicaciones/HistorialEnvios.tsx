@@ -7,6 +7,8 @@ type LogEnvioDetalle = {
   id: string
   destino: string
   estado: string
+  canal: string
+  creadoEn: Date
   caso?: { nombreEvaluado: string } | null
   destinatario?: { nombre: string } | null
   enviadoPor: { nombre: string }
