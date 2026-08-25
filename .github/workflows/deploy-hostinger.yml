@@ -22,7 +22,7 @@ jobs:
       
       - name: Build
         run: npm run build
-      
+
       - name: Deploy to Hostinger
         uses: appleboy/ssh-action@master
         with:
@@ -30,8 +30,13 @@ jobs:
           username: ${{ secrets.HOSTINGER_USER }}
           key: ${{ secrets.HOSTINGER_SSH_KEY }}
           script: |
-            cd /var/www/app
-            git pull origin main
-            npm ci --production
+            cd /var/www/app || mkdir -p /var/www/app && cd /var/www/app
+            git init || true
+            git remote remove origin || true
+            git remote add origin https://github.com/pascalcorrea/Auditoria-ConectaMente.git
+            git fetch origin main
+            git reset --hard origin/main
+            git clean -fd
+            npm install --production=false
             npm run build
-            systemctl restart myapp
+            pm2 startOrRestart ecosystem.config.js || pm2 start npm --name myapp -- start
