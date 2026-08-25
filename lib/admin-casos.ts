@@ -53,7 +53,7 @@ export async function obtenerCargaMedicos(): Promise<MedicoConCarga[]> {
   })
 
   const cargaPorMedico = await Promise.all(
-    medicos.map(async (medico) => {
+    medicos.map(async (medico: any) => {
       const activos = await prisma.caso.count({
         where: {
           medicoId: medico.id,
