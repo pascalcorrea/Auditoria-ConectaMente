@@ -12,19 +12,22 @@ jobs:
       - uses: actions/checkout@v3
       
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
+      - name: Generate Prisma
+        run: npx prisma generate
+
       - name: Build
         run: npm run build
 
       - name: Deploy to Hostinger
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOSTINGER_HOST }}
           username: ${{ secrets.HOSTINGER_USER }}
@@ -38,5 +41,6 @@ jobs:
             git reset --hard origin/main
             git clean -fd
             npm install --production=false
+            npx prisma generate
             npm run build
-            pm2 startOrRestart ecosystem.config.js || pm2 start npm --name myapp -- start
+            pm2 startOrRestart ecosystem.config.js
