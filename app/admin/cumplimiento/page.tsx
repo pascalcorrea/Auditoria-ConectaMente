@@ -71,7 +71,7 @@ export default async function AdminCumplimientoPage({
           </thead>
           <tbody>
             {casos.length > 0 ? (
-              casos.map((caso) => {
+              casos.map((caso: any) => {
                 const dias = daysUntilDue(caso.fechaLimite)
                 return (
                   <tr key={caso.id} className="border-t border-brand-borderSoft">
