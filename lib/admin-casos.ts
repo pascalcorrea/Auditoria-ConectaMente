@@ -1,5 +1,4 @@
 import type { EstadoCaso, PrioridadCaso } from '@/lib/types'
-import type { Prisma } from '@prisma/client'
 ﻿import { prisma } from './prisma'
 
 export interface MedicoConCarga {
@@ -16,8 +15,8 @@ export interface FiltrosCasos {
   prioridad?: string
 }
 
-export function construirWhereCasos(filtros: FiltrosCasos): Prisma.CasoWhereInput {
-  const where: Prisma.CasoWhereInput = {}
+export function construirWhereCasos(filtros: FiltrosCasos): any {
+  const where: any = {}
 
   if (filtros.desde || filtros.hasta) {
     where.fechaLimite = {}
