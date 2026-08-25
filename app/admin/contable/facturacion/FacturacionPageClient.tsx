@@ -131,10 +131,10 @@ export default function FacturacionPageClient({ organizaciones }: Props) {
             <div>
               <span
                 className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
-                  TONO_CLASSES[ESTADO_FACTURA_TONO[factura.estado]]
+                  TONO_CLASSES[ESTADO_FACTURA_TONO[factura.estado as keyof typeof ESTADO_FACTURA_TONO]]
                 }`}
               >
-                {ESTADO_FACTURA_LABEL[factura.estado]}
+                {ESTADO_FACTURA_LABEL[factura.estado as keyof typeof ESTADO_FACTURA_LABEL]}
               </span>
             </div>
             <div className="text-sm tabular-nums text-brand-textMuted">{factura.creadoEn.toLocaleDateString('es-CL')}</div>

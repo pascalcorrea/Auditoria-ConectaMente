@@ -105,10 +105,10 @@ export default function PagosMedicosPageClient({ medicos }: Props) {
             <div>
               <span
                 className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
-                  TONO_CLASSES[ESTADO_PAGO_TONO[pago.estado]]
+                  TONO_CLASSES[ESTADO_PAGO_TONO[pago.estado as keyof typeof ESTADO_PAGO_TONO]]
                 }`}
               >
-                {ESTADO_PAGO_LABEL[pago.estado]}
+                {ESTADO_PAGO_LABEL[pago.estado as keyof typeof ESTADO_PAGO_LABEL]}
               </span>
             </div>
             <div>
