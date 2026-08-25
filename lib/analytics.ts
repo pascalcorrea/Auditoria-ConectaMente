@@ -46,7 +46,7 @@ export async function getAnalyticsMetrics(): Promise<AnalyticsMetrics> {
 
   const tiempoPromedio =
     casosEntregadosPorFechas.length > 0
-      ? casosEntregadosPorFechas.reduce((sum, caso) => {
+      ? casosEntregadosPorFechas.reduce((sum: any, caso: any) => {
           const end = caso.actualizadoEn || new Date()
           const days = (end.getTime() - caso.fechaIngreso.getTime()) / (1000 * 60 * 60 * 24)
           return sum + days
