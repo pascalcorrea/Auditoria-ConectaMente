@@ -1,4 +1,3 @@
-import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import { HTMLAttributes } from 'react'
 
 export function Card({ className = '', ...rest }: HTMLAttributes<HTMLDivElement>) {

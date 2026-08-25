@@ -1,4 +1,3 @@
-import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import crypto from 'crypto'
 
 const DAILY_API_KEY = process.env.DAILY_API_KEY

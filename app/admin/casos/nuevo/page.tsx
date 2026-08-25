@@ -1,4 +1,3 @@
-import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { TopHeader } from '@/components/layout/TopHeader'
 import { NuevoCasoForm } from './NuevoCasoForm'

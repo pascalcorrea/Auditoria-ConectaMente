@@ -1,4 +1,3 @@
-import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 // Server-only Amelia API client — do NOT import from client components
 // Auditoria-ConectaMente integration with Amelia Booking (WordPress plugin)
 

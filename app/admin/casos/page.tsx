@@ -1,4 +1,3 @@
-import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { listarCasosFiltrados } from '@/lib/admin-casos'
 import Link from 'next/link'

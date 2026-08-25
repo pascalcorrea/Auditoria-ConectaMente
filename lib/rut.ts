@@ -1,4 +1,3 @@
-import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 export function normalizeRut(rut: string): string {
   const clean = rut.replace(/[.\s-]/g, '').toUpperCase()
   const body = clean.slice(0, -1)

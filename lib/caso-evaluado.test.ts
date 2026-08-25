@@ -1,4 +1,3 @@
-import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import { prisma } from './prisma'
 
 describe('Caso evaluado fields (Fase 2a)', () => {

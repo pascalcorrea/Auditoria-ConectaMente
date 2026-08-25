@@ -1,4 +1,3 @@
-import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import { prisma } from './prisma'
 import { listarTodosCasos, obtenerCargaMedicos, reasignarCaso } from './admin-casos'
 

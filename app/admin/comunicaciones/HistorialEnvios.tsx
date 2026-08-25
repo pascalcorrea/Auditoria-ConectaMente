@@ -1,9 +1,7 @@
-import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 'use client'
 
 import { useEffect, useState } from 'react'
 import { ESTADO_ENVIO_LABEL, ESTADO_ENVIO_TONO, TONO_CLASSES } from '@/components/ui/StatusBadge'
-import type { LogEnvio } from '@prisma/client'
 
 type LogEnvioDetalle = LogEnvio & {
   caso?: { nombreEvaluado: string } | null

@@ -1,4 +1,3 @@
-import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import { InputHTMLAttributes, useId } from 'react'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {

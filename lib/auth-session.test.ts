@@ -1,4 +1,3 @@
-import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 import { authOptions } from './auth'
 import { prisma } from './prisma'
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest'

@@ -1,4 +1,3 @@
-import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 export type EstadoCaso = 'recibido' | 'en_revision' | 'informe_en_validacion' | 'entregado'
 export type PrioridadCaso = 'normal' | 'urgente'
 export type Rol = 'cliente' | 'medico' | 'backoffice'

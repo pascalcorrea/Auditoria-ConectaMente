@@ -1,9 +1,7 @@
-import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 'use client'
 
 import { useEffect, useState } from 'react'
 import { ESTADO_PAGO_LABEL, ESTADO_PAGO_TONO, TONO_CLASSES } from '@/components/ui/StatusBadge'
-import type { PagoMedico } from '@prisma/client'
 
 type PagoDetalle = PagoMedico & { medico: { nombre: string }; caso: { nombreEvaluado: string } }
 

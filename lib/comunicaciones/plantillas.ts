@@ -1,4 +1,3 @@
-import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 // Placeholder de plantillas WhatsApp aprobadas en Meta Business Suite
 // Las plantillas reales se crean en la consola de Meta, no aquí
 

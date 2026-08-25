@@ -1,4 +1,3 @@
-import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 // Brevo (Sendinblue) via fetch directo
 // Adaptado de ConectaMente-1 lib/send-booking-email.ts
 

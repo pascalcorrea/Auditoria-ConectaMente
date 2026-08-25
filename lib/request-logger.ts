@@ -1,4 +1,3 @@
-import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 export function logRequest(method: string, path: string, userId?: string, level: 'info' | 'warn' | 'error' = 'info') {
   const timestamp = new Date().toISOString()
   const userInfo = userId ? ` (user: ${userId})` : ''

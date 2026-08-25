@@ -1,4 +1,3 @@
-import type { Caso, Organizacion, Usuario, Sesion, Informe, LogEnvio, FacturaOrganizacion, PagoMedico } from '@prisma/client'
 // No deps externas, solo fetch nativo
 // Adaptado de ConectaMente-1 lib/whatsapp.ts
 
