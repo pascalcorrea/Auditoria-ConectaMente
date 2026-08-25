@@ -1,6 +1,4 @@
 /** @type {import('@prisma/internals').GetConfig} */
 module.exports = {
-  datasource: {
-    url: process.env.DATABASE_URL,
-  },
+  datasourceUrl: process.env.DATABASE_URL,
 }
