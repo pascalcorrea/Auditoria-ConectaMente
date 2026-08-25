@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import { ESTADO_ENVIO_LABEL, ESTADO_ENVIO_TONO, TONO_CLASSES } from '@/components/ui/StatusBadge'
 
-type LogEnvioDetalle = LogEnvio & {
+type LogEnvioDetalle = {
+  estado: string
   caso?: { nombreEvaluado: string } | null
   destinatario?: { nombre: string } | null
   enviadoPor: { nombre: string }

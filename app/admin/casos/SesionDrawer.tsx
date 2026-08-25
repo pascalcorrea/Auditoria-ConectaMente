@@ -8,7 +8,7 @@ import { EstadoBadge, PrioridadBadge } from '@/components/ui/StatusBadge'
 import { agendarSesion, obtenerSlotsDisponibles } from './actions'
 
 type Props = {
-  caso: Caso & { sesion: Sesion | null; organizacion: Organizacion; medico: Usuario | null }
+  caso: any
   open: boolean
 }
 

@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useActionState } from 'react'
-import { Usuario } from '@prisma/client'
 import { Button } from '@/components/ui/Button'
 import { guardarHorarioMedico } from '@/app/admin/usuarios/[id]/actions'
 
@@ -13,7 +12,7 @@ type DiaSemana = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes' | 'saba
 type Franja = { horaInicio: string; horaFin: string }
 
 interface WeeklyScheduleEditorProps {
-  medico: Usuario
+  medico: any
 }
 
 export function WeeklyScheduleEditor({ medico }: WeeklyScheduleEditorProps) {

@@ -8,8 +8,8 @@ import SesionDrawer from './SesionDrawer'
 import { PrioridadBadge } from '@/components/ui/StatusBadge'
 
 interface CasosPageClientProps {
-  casos: (Caso & { organizacion: Organizacion; medico: Usuario | null })[]
-  casoDetalle: (Caso & { sesion: Sesion | null; organizacion: Organizacion; medico: Usuario | null; informe: Informe | null }) | null
+  casos: any[]
+  casoDetalle: any
   params: { desde?: string; hasta?: string; estado?: string; prioridad?: string; detalle?: string }
 }
 
