@@ -2,7 +2,7 @@ import type { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { verifyCredentials } from './auth-credentials'
 import { prisma } from './prisma'
-import type { Rol } from '@prisma/client'
+import type { Rol } from '@/lib/types'
 
 export const authOptions: NextAuthOptions = {
   session: { strategy: 'jwt' },

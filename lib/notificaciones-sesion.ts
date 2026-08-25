@@ -1,4 +1,4 @@
-import { EstadoSesion } from '@prisma/client'
+import { EstadoSesion } from '@/lib/types'
 import { enviarEmail, generarEmailSesionRealizadaMedico } from './notificaciones'
 import { prisma } from './prisma'
 

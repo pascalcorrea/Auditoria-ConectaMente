@@ -1,5 +1,5 @@
 import { prisma } from './prisma'
-import type { Rol } from '@prisma/client'
+import type { Rol } from '@/lib/types'
 
 export async function listarUsuarios(filtro?: { rol?: Rol; activo?: boolean }) {
   return prisma.usuario.findMany({

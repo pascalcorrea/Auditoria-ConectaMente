@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import type { Prisma } from '@prisma/client'
+import type { Prisma } from '@/lib/types'
 
 const TARIFA_MEDICO_DEFAULT_CLP = 50000 // tarifa default si no está configurada
 

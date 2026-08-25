@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from './auth'
-import type { Rol } from '@prisma/client'
+import type { Rol } from '@/lib/types'
 
 export type PermisosEndpoint = {
   [key in Rol]?: boolean

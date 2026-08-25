@@ -1,5 +1,5 @@
 import { prisma } from './prisma'
-import type { Prisma } from '@prisma/client'
+import type { Prisma } from '@/lib/types'
 
 export async function crearSesion(casoId: string, dailyRoomUrl: string) {
   return prisma.sesion.create({

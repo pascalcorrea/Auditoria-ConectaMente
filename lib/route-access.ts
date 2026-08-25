@@ -1,4 +1,4 @@
-import type { Rol } from '@prisma/client'
+import type { Rol } from '@/lib/types'
 
 const ROLE_PREFIXES: Array<{ prefix: string; role: Rol }> = [
   { prefix: '/cliente', role: 'cliente' },
