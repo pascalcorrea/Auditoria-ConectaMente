@@ -7,7 +7,7 @@ jobs:
   diagnose:
     runs-on: ubuntu-latest
     steps:
-      - name: Check nginx status and config
+      - name: Fix nginx proxy_pass port for app.conectamente.cl
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -15,19 +15,25 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            echo "=== nginx status ==="
-            systemctl status nginx --no-pager -l | head -20 || true
+            echo "=== before ==="
+            grep proxy_pass /etc/nginx/sites-enabled/app.conectamente.cl
+
+            cp /etc/nginx/sites-enabled/app.conectamente.cl /etc/nginx/sites-enabled/app.conectamente.cl.bak-before-3100-fix
+            sed -i 's#proxy_pass http://127.0.0.1:3001;#proxy_pass http://127.0.0.1:3100;#' /etc/nginx/sites-enabled/app.conectamente.cl
+
             echo ""
-            echo "=== nginx config test ==="
-            nginx -t 2>&1 || true
+            echo "=== after ==="
+            grep proxy_pass /etc/nginx/sites-enabled/app.conectamente.cl
+
             echo ""
-            echo "=== sites-enabled configs mentioning app.conectamente.cl or 3100 ==="
-            grep -rl "app.conectamente.cl\|:3100" /etc/nginx/sites-enabled/ 2>/dev/null || true
+            echo "=== nginx -t ==="
+            nginx -t
+
             echo ""
-            grep -A5 "server_name\|proxy_pass" /etc/nginx/sites-enabled/* 2>/dev/null || true
+            echo "=== reload nginx ==="
+            systemctl reload nginx
+
+            sleep 1
             echo ""
-            echo "=== recent nginx error log ==="
-            tail -30 /var/log/nginx/error.log 2>/dev/null || true
-            echo ""
-            echo "=== pm2 status ==="
-            pm2 status || true
+            echo "=== curl https://app.conectamente.cl/login ==="
+            curl -s -o /dev/null -w "HTTP %{http_code}\n" https://app.conectamente.cl/login
