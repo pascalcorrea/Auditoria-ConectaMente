@@ -16,8 +16,8 @@ jobs:
           port: 22
           script: |
             cd ${{ secrets.PROJECT_DIR }} || exit 1
-            echo "=== prisma migrate status ==="
-            npx prisma migrate status || true
+            echo "=== resolving the migration that was verified as fully applied ==="
+            npx prisma migrate resolve --applied "20260826191229_fase5_facturacion_pagos_comunicaciones" || exit 1
             echo ""
-            echo "=== actual live schema (introspection, does not touch schema.prisma) ==="
-            npx prisma db pull --print 2>&1 | grep -A3 -E "model (LogEnvio|PagoMedico|FacturaOrganizacion)|enum (CanalEnvio|EstadoEnvio|EstadoPago|EstadoFactura)" || echo "none of the new models/enums exist yet"
+            echo "=== prisma migrate status (after resolve) ==="
+            npx prisma migrate status || true
