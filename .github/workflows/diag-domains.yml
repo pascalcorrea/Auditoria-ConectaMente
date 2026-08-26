@@ -7,25 +7,45 @@ jobs:
   diagnose:
     runs-on: ubuntu-latest
     steps:
-      - name: Inventory cal/crm/nidoapp/staging
+      - name: Inventory cal/crm/nidoapp/staging/peritajes
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          username: opsbot
+          key: ${{ secrets.OPS_SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            echo "=== whoami ==="
+            echo "=== whoami / groups ==="
             whoami
+            groups
+
             echo ""
             echo "=== docker ps -a ==="
-            docker ps -a 2>&1
+            sudo docker ps -a
+
             echo ""
             echo "=== ports 3001, 3003, 3004, 3030 ==="
-            ss -tlnp 2>&1 | grep -E ":3001|:3003|:3004|:3030" || echo "ss failed or nothing listening (may need root)"
+            sudo ss -tlnp | grep -E ":3001|:3003|:3004|:3030"
+
             echo ""
-            echo "=== /var/www listing ==="
-            ls -la /var/www/ 2>&1
+            echo "=== mysql databases ==="
+            sudo mysql -e "SHOW DATABASES;"
+
             echo ""
-            echo "=== relevant dirs ==="
-            find / -maxdepth 3 \( -iname "*cal*" -o -iname "*nidoapp*" -o -iname "*twenty*" \) 2>/dev/null | grep -vE "^/proc|^/sys|/usr/|/snap/"
+            echo "=== postgres databases (docker) ==="
+            sudo docker exec conectamente-db psql -U app_user -l
+
+            echo ""
+            echo "=== /var/www/peritajes ==="
+            sudo ls -la /var/www/peritajes
+            sudo cat /var/www/peritajes/package.json 2>/dev/null | grep '"name"'
+            cd /var/www/peritajes 2>/dev/null && sudo git remote -v
+
+            echo ""
+            echo "=== /var/www/conectamente-staging ==="
+            sudo ls -la /var/www/conectamente-staging | head -10
+
+            echo ""
+            echo "=== /opt/twenty and /opt/calcom ==="
+            sudo ls -la /opt/twenty 2>/dev/null | head -10
+            sudo ls -la /opt/calcom 2>/dev/null | head -10
