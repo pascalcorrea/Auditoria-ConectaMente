@@ -7,7 +7,7 @@ jobs:
   diagnose:
     runs-on: ubuntu-latest
     steps:
-      - name: Check PM2 status and app response
+      - name: Clean up port 3100 and restart cleanly
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -15,11 +15,26 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
+            echo "=== what's holding port 3100 ==="
+            ss -tlnp | grep 3100 || true
+            echo ""
+            echo "=== pm2 delete the crash-looping process ==="
+            pm2 delete auditoria-conectamente || true
+            echo ""
+            echo "=== kill anything still bound to 3100 (orphan from a previous run) ==="
+            fuser -k 3100/tcp || true
+            sleep 2
+            echo ""
+            echo "=== confirm port is free ==="
+            ss -tlnp | grep 3100 || echo "port 3100 is free"
+            echo ""
+            echo "=== start fresh ==="
+            cd ${{ secrets.PROJECT_DIR }} || exit 1
+            pm2 start ecosystem.config.js || exit 1
+            sleep 3
+            echo ""
             echo "=== pm2 status ==="
             pm2 status || true
             echo ""
-            echo "=== pm2 logs (last 60 lines, no stream) ==="
-            pm2 logs auditoria-conectamente --lines 60 --nostream || true
-            echo ""
             echo "=== curl localhost:3100 ==="
-            curl -sv http://localhost:3100/login 2>&1 | head -40 || true
+            curl -sv http://localhost:3100/login 2>&1 | head -15 || true
