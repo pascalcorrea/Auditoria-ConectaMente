@@ -1,0 +1,25 @@
+name: Diagnose PM2 (temporary)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PM2 status and app response
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            echo "=== pm2 status ==="
+            pm2 status || true
+            echo ""
+            echo "=== pm2 logs (last 60 lines, no stream) ==="
+            pm2 logs auditoria-conectamente --lines 60 --nostream || true
+            echo ""
+            echo "=== curl localhost:3100 ==="
+            curl -sv http://localhost:3100/login 2>&1 | head -40 || true
