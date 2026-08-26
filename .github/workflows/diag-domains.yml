@@ -7,7 +7,7 @@ jobs:
   diagnose:
     runs-on: ubuntu-latest
     steps:
-      - name: Inventory cal/crm/nidoapp/staging/peritajes
+      - name: Full cert list + nidoapp process check
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -15,37 +15,19 @@ jobs:
           key: ${{ secrets.OPS_SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            echo "=== whoami / groups ==="
-            whoami
-            groups
+            echo "=== certbot certificates ==="
+            sudo certbot certificates 2>&1
 
             echo ""
-            echo "=== docker ps -a ==="
-            sudo docker ps -a
+            echo "=== docker volumes ==="
+            sudo docker volume ls
 
             echo ""
-            echo "=== ports 3001, 3003, 3004, 3030 ==="
-            sudo ss -tlnp | grep -E ":3001|:3003|:3004|:3030"
+            echo "=== how is nidoapp run? (systemd, pm2 under another user, cron) ==="
+            sudo systemctl list-units --type=service --all 2>/dev/null | grep -i nido
+            sudo su - nidoapp -c "pm2 status" 2>&1 || true
+            ls /home/ 2>&1
 
             echo ""
-            echo "=== mysql databases ==="
-            sudo mysql -e "SHOW DATABASES;"
-
-            echo ""
-            echo "=== postgres databases (docker) ==="
-            sudo docker exec conectamente-db psql -U app_user -l
-
-            echo ""
-            echo "=== /var/www/peritajes ==="
-            sudo ls -la /var/www/peritajes
-            sudo cat /var/www/peritajes/package.json 2>/dev/null | grep '"name"'
-            cd /var/www/peritajes 2>/dev/null && sudo git remote -v
-
-            echo ""
-            echo "=== /var/www/conectamente-staging ==="
-            sudo ls -la /var/www/conectamente-staging | head -10
-
-            echo ""
-            echo "=== /opt/twenty and /opt/calcom ==="
-            sudo ls -la /opt/twenty 2>/dev/null | head -10
-            sudo ls -la /opt/calcom 2>/dev/null | head -10
+            echo "=== sites-available vs sites-enabled (symlink check) ==="
+            ls -la /etc/nginx/sites-enabled/ | grep -E "staging|calcom|twenty|wordpress-audit|nidoapp"
