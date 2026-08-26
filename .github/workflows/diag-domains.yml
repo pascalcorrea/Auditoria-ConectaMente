@@ -1,59 +1,18 @@
-name: Clean redeploy of /var/www/app (destructive, one-shot)
+name: Get opsbot public key (read-only)
 
 on:
   workflow_dispatch:
 
 jobs:
-  redeploy:
+  getkey:
     runs-on: ubuntu-latest
     steps:
-      - name: Backup, wipe, fresh clone, rebuild, restart
+      - name: Print public key
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: opsbot
           key: ${{ secrets.OPS_SSH_PRIVATE_KEY }}
           port: 22
-          command_timeout: 5m
           script: |
-            set -x
-
-            echo "### backup the corrupted directory (not deleted, just moved aside) ###"
-            sudo mv /var/www/app /var/www/app.corrupted-backup-$(date +%Y%m%d%H%M%S)
-
-            echo "### kill the orphan process on 3100 ###"
-            sudo fuser -k 3100/tcp < /dev/null
-            sleep 2
-
-            echo "### fresh clone ###"
-            sudo git clone https://github.com/pascalcorrea/Auditoria-ConectaMente.git /var/www/app
-
-            echo "### write .env ###"
-            sudo tee /var/www/app/.env > /dev/null <<'EOF'
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
-            NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
-            EOF
-
-            cd /var/www/app
-
-            echo "### npm install ###"
-            sudo npm install --production=false < /dev/null
-
-            echo "### prisma generate ###"
-            sudo npx prisma generate < /dev/null
-
-            echo "### prisma migrate deploy ###"
-            sudo npx prisma migrate deploy < /dev/null
-
-            echo "### build ###"
-            sudo npm run build < /dev/null
-
-            echo "### pm2 restart (as root, matching original setup) ###"
-            sudo pm2 delete auditoria-conectamente < /dev/null || true
-            sudo pm2 start ecosystem.config.js < /dev/null
-            sleep 3
-            sudo pm2 status
-
-            echo "### verify ###"
-            curl -s http://localhost:3100/login | grep -o "<title>[^<]*</title>"
+            cat ~/.ssh/opsbot_key.pub
