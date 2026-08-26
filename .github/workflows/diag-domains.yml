@@ -1,18 +1,58 @@
-name: Get opsbot public key (read-only)
+name: Deploy real Peritajes site on its own port (destructive, one-shot)
 
 on:
   workflow_dispatch:
 
 jobs:
-  getkey:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Print public key
+      - name: Backup wrong dir, clone real repo, build, run on 3200, fix nginx
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: opsbot
           key: ${{ secrets.OPS_SSH_PRIVATE_KEY }}
           port: 22
+          command_timeout: 5m
           script: |
-            cat ~/.ssh/opsbot_key.pub
+            set -x
+
+            echo "### backup the wrong (Core-code) directory ###"
+            sudo mv /var/www/peritajes /var/www/peritajes.wrong-backup-$(date +%Y%m%d%H%M%S)
+
+            echo "### trust github.com host key for opsbot ###"
+            mkdir -p ~/.ssh
+            ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+
+            echo "### fresh clone via deploy key ###"
+            sudo git clone git@github.com:pascalcorrea/web-conectamente-auditoria.git /var/www/peritajes
+
+            echo "### write .env (placeholders for Brevo -- fill in real values later) ###"
+            sudo tee /var/www/peritajes/.env > /dev/null <<'EOF'
+            BREVO_API_KEY=
+            CONTACT_NOTIFICATION_EMAIL=
+            EOF
+
+            cd /var/www/peritajes
+
+            echo "### npm install ###"
+            sudo npm install --production=false < /dev/null
+
+            echo "### build ###"
+            sudo npm run build < /dev/null
+
+            echo "### pm2 start on 3200 ###"
+            sudo pm2 delete web-conectamente-auditoria < /dev/null || true
+            sudo pm2 start ecosystem.config.js < /dev/null
+            sleep 3
+            sudo pm2 status
+
+            echo "### fix nginx: peritajes.conectamente.cl 3100 -> 3200 ###"
+            sudo sed -i 's#proxy_pass http://localhost:3100;#proxy_pass http://localhost:3200;#' /etc/nginx/sites-enabled/peritajes.conectamente.cl
+            grep proxy_pass /etc/nginx/sites-enabled/peritajes.conectamente.cl
+            sudo nginx -t
+            sudo systemctl reload nginx
+
+            echo "### verify ###"
+            curl -s http://localhost:3200/ | grep -o "<title>[^<]*</title>"
