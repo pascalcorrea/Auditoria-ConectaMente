@@ -1,13 +1,13 @@
-name: Diagnose stale root page (temporary, read-only)
+name: Fix duplicate PM2 instance (destructive, one-shot)
 
 on:
   workflow_dispatch:
 
 jobs:
-  diagnose:
+  fix:
     runs-on: ubuntu-latest
     steps:
-      - name: Check source vs build output
+      - name: Kill root's redundant PM2 process, keep the deploy user's official one
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -16,22 +16,19 @@ jobs:
           port: 22
           command_timeout: 3m
           script: |
-            echo "=== source app/page.tsx ==="
-            sudo cat /var/www/app/app/page.tsx
+            set -x
 
-            echo ""
-            echo "=== git log -1 ==="
-            sudo git config --global --add safe.directory /var/www/app
-            sudo git -C /var/www/app log -1 --oneline
+            echo "### delete root's own pm2-managed auditoria-conectamente ###"
+            sudo pm2 delete auditoria-conectamente < /dev/null
 
-            echo ""
-            echo "=== .next build output for / ==="
-            sudo grep -o "Auditorías Médicas\|Create Next App" /var/www/app/.next/server/app/index.html 2>/dev/null
+            echo "### give the port a moment to free up ###"
+            sleep 2
+            sudo ss -tlnp | grep 3100 || echo "port free, nothing bound yet"
 
-            echo ""
-            echo "=== .next mtime ==="
-            sudo stat /var/www/app/.next/server/app/index.html 2>/dev/null | grep Modify
+            echo "### restart the deploy user's own instance so it can bind 3100 cleanly ###"
+            sudo -u ${{ secrets.SSH_USER }} pm2 restart auditoria-conectamente < /dev/null || true
+            sleep 3
+            sudo -u ${{ secrets.SSH_USER }} pm2 status
 
-            echo ""
-            echo "=== pm2 status / restart time ==="
-            sudo pm2 jlist | grep -A3 '"name":"auditoria-conectamente"' | grep -E "pm_uptime|restart_time" || sudo pm2 describe auditoria-conectamente | grep -E "uptime|restarts|created"
+            echo "### verify ###"
+            curl -s http://localhost:3100/ | grep -o "<title>[^<]*</title>"
