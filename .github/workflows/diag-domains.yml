@@ -1,57 +1,40 @@
-name: Cleanup unused domains (destructive, one-shot)
+name: Diagnose port 3100 content (temporary, read-only)
 
 on:
   workflow_dispatch:
 
 jobs:
-  cleanup:
+  diagnose:
     runs-on: ubuntu-latest
     steps:
-      - name: Remove staging, cal, crm, wp-audit, nidoapp, pruebas.nidoapp
+      - name: Check what's actually on 3100
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: opsbot
           key: ${{ secrets.OPS_SSH_PRIVATE_KEY }}
           port: 22
-          command_timeout: 5m
+          command_timeout: 3m
           script: |
-            set -x
+            echo "=== pm2 status ==="
+            pm2 status
 
-            echo "### nginx sites ###"
-            sudo rm -f /etc/nginx/sites-enabled/staging-conectamente /etc/nginx/sites-available/staging-conectamente
-            sudo rm -f /etc/nginx/sites-enabled/calcom /etc/nginx/sites-available/calcom
-            sudo rm -f /etc/nginx/sites-enabled/twenty /etc/nginx/sites-available/twenty
-            sudo rm -f /etc/nginx/sites-enabled/wordpress-audit /etc/nginx/sites-available/wordpress-audit
-            sudo rm -f /etc/nginx/sites-enabled/nidoapp /etc/nginx/sites-available/nidoapp
-            sudo rm -f /etc/nginx/sites-enabled/nidoapp-pruebas /etc/nginx/sites-available/nidoapp-pruebas
+            echo ""
+            echo "=== curl localhost:3100 title ==="
+            curl -s http://localhost:3100/ | grep -o "<title>[^<]*</title>"
 
-            echo "### certbot ###"
-            sudo certbot delete --cert-name cal.conectamente.cl --non-interactive < /dev/null
-            sudo certbot delete --cert-name crm.conectamente.cl --non-interactive < /dev/null
-            sudo certbot delete --cert-name nidoapp.cloud --non-interactive < /dev/null
-            sudo certbot delete --cert-name pruebas.nidoapp.cloud --non-interactive < /dev/null
+            echo ""
+            echo "=== /var/www/app git log + remote ==="
+            cd /var/www/app
+            sudo git log -1 --oneline
+            sudo git remote -v
+            sudo cat package.json | grep '"name"'
 
-            echo "### docker containers + volumes ###"
-            sudo docker rm -f calcom calcom-db < /dev/null
-            sudo docker volume rm calcom_calcom-db-data calcom_calcom-uploads < /dev/null
-            sudo docker rm -f twenty-server-1 twenty-worker-1 twenty-db-1 twenty-twenty-redis-1 < /dev/null
-            sudo docker volume rm twenty_twenty-db twenty_twenty-redis twenty_twenty-storage < /dev/null
+            echo ""
+            echo "=== /var/www/app/.next build id + mtime ==="
+            sudo cat /var/www/app/.next/BUILD_ID 2>/dev/null
+            sudo stat /var/www/app/.next | head -5
 
-            echo "### filesystem ###"
-            sudo rm -rf /var/www/conectamente-staging
-            sudo rm -rf /opt/calcom
-            sudo rm -rf /opt/twenty
-            sudo rm -rf /var/www/wordpress-audit
-            sudo rm -rf /var/www/nidoapp
-            sudo rm -rf /var/www/nidoapp-pruebas
-
-            echo "### mysql ###"
-            sudo mysql -e "DROP DATABASE IF EXISTS conectamente_wp_audit;" < /dev/null
-
-            echo "### nginx reload ###"
-            sudo nginx -t
-            sudo systemctl reload nginx
-
-            echo "### done, remaining sites ###"
-            ls /etc/nginx/sites-enabled/
+            echo ""
+            echo "=== search for 'Peritajes ConectaMente' string in /var/www/app ==="
+            sudo grep -rl "Peritajes ConectaMente" /var/www/app/app /var/www/app/components /var/www/app/.next/server/app 2>/dev/null | head -20
