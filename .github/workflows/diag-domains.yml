@@ -1,34 +1,57 @@
-name: Diagnose other domains (temporary, read-only)
+name: Cleanup unused domains (destructive, one-shot)
 
 on:
   workflow_dispatch:
 
 jobs:
-  diagnose:
+  cleanup:
     runs-on: ubuntu-latest
     steps:
-      - name: Full cert list + nidoapp process check
+      - name: Remove staging, cal, crm, wp-audit, nidoapp, pruebas.nidoapp
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: opsbot
           key: ${{ secrets.OPS_SSH_PRIVATE_KEY }}
           port: 22
-          command_timeout: 3m
+          command_timeout: 5m
           script: |
-            echo "=== certbot certificates ==="
-            sudo certbot certificates 2>&1 < /dev/null
+            set -x
 
-            echo ""
-            echo "=== docker volumes ==="
-            sudo docker volume ls < /dev/null
+            echo "### nginx sites ###"
+            sudo rm -f /etc/nginx/sites-enabled/staging-conectamente /etc/nginx/sites-available/staging-conectamente
+            sudo rm -f /etc/nginx/sites-enabled/calcom /etc/nginx/sites-available/calcom
+            sudo rm -f /etc/nginx/sites-enabled/twenty /etc/nginx/sites-available/twenty
+            sudo rm -f /etc/nginx/sites-enabled/wordpress-audit /etc/nginx/sites-available/wordpress-audit
+            sudo rm -f /etc/nginx/sites-enabled/nidoapp /etc/nginx/sites-available/nidoapp
+            sudo rm -f /etc/nginx/sites-enabled/nidoapp-pruebas /etc/nginx/sites-available/nidoapp-pruebas
 
-            echo ""
-            echo "=== how is nidoapp run? (systemd, cron) ==="
-            sudo systemctl list-units --type=service --all 2>/dev/null | grep -i nido
-            ls /home/ 2>&1
-            ls -la /home/*/.pm2/logs/ 2>&1 | grep -i nido
+            echo "### certbot ###"
+            sudo certbot delete --cert-name cal.conectamente.cl --non-interactive < /dev/null
+            sudo certbot delete --cert-name crm.conectamente.cl --non-interactive < /dev/null
+            sudo certbot delete --cert-name nidoapp.cloud --non-interactive < /dev/null
+            sudo certbot delete --cert-name pruebas.nidoapp.cloud --non-interactive < /dev/null
 
-            echo ""
-            echo "=== sites-available vs sites-enabled (symlink check) ==="
-            ls -la /etc/nginx/sites-enabled/ | grep -E "staging|calcom|twenty|wordpress-audit|nidoapp"
+            echo "### docker containers + volumes ###"
+            sudo docker rm -f calcom calcom-db < /dev/null
+            sudo docker volume rm calcom_calcom-db-data calcom_calcom-uploads < /dev/null
+            sudo docker rm -f twenty-server-1 twenty-worker-1 twenty-db-1 twenty-twenty-redis-1 < /dev/null
+            sudo docker volume rm twenty_twenty-db twenty_twenty-redis twenty_twenty-storage < /dev/null
+
+            echo "### filesystem ###"
+            sudo rm -rf /var/www/conectamente-staging
+            sudo rm -rf /opt/calcom
+            sudo rm -rf /opt/twenty
+            sudo rm -rf /var/www/wordpress-audit
+            sudo rm -rf /var/www/nidoapp
+            sudo rm -rf /var/www/nidoapp-pruebas
+
+            echo "### mysql ###"
+            sudo mysql -e "DROP DATABASE IF EXISTS conectamente_wp_audit;" < /dev/null
+
+            echo "### nginx reload ###"
+            sudo nginx -t
+            sudo systemctl reload nginx
+
+            echo "### done, remaining sites ###"
+            ls /etc/nginx/sites-enabled/
