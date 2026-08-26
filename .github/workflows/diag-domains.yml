@@ -7,7 +7,7 @@ jobs:
   diagnose:
     runs-on: ubuntu-latest
     steps:
-      - name: Check what's actually on 3100
+      - name: Check git state and orphan processes
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -16,25 +16,23 @@ jobs:
           port: 22
           command_timeout: 3m
           script: |
-            echo "=== pm2 status ==="
-            pm2 status
+            sudo git config --global --add safe.directory /var/www/app
+
+            echo "=== /var/www/app git log (last 5) ==="
+            sudo git -C /var/www/app log -5 --oneline
 
             echo ""
-            echo "=== curl localhost:3100 title ==="
-            curl -s http://localhost:3100/ | grep -o "<title>[^<]*</title>"
+            echo "=== /var/www/app git remote ==="
+            sudo git -C /var/www/app remote -v
 
             echo ""
-            echo "=== /var/www/app git log + remote ==="
-            cd /var/www/app
-            sudo git log -1 --oneline
-            sudo git remote -v
-            sudo cat package.json | grep '"name"'
+            echo "=== /var/www/app git status ==="
+            sudo git -C /var/www/app status --short | head -30
 
             echo ""
-            echo "=== /var/www/app/.next build id + mtime ==="
-            sudo cat /var/www/app/.next/BUILD_ID 2>/dev/null
-            sudo stat /var/www/app/.next | head -5
+            echo "=== what's actually listening on 3100 right now (orphan check) ==="
+            sudo ss -tlnp | grep 3100
 
             echo ""
-            echo "=== search for 'Peritajes ConectaMente' string in /var/www/app ==="
-            sudo grep -rl "Peritajes ConectaMente" /var/www/app/app /var/www/app/components /var/www/app/.next/server/app 2>/dev/null | head -20
+            echo "=== full process list for anything with 'next' or 'node' ==="
+            ps aux | grep -E "next|node" | grep -v grep
