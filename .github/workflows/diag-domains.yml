@@ -14,19 +14,20 @@ jobs:
           username: opsbot
           key: ${{ secrets.OPS_SSH_PRIVATE_KEY }}
           port: 22
+          command_timeout: 3m
           script: |
             echo "=== certbot certificates ==="
-            sudo certbot certificates 2>&1
+            sudo certbot certificates 2>&1 < /dev/null
 
             echo ""
             echo "=== docker volumes ==="
-            sudo docker volume ls
+            sudo docker volume ls < /dev/null
 
             echo ""
-            echo "=== how is nidoapp run? (systemd, pm2 under another user, cron) ==="
+            echo "=== how is nidoapp run? (systemd, cron) ==="
             sudo systemctl list-units --type=service --all 2>/dev/null | grep -i nido
-            sudo su - nidoapp -c "pm2 status" 2>&1 || true
             ls /home/ 2>&1
+            ls -la /home/*/.pm2/logs/ 2>&1 | grep -i nido
 
             echo ""
             echo "=== sites-available vs sites-enabled (symlink check) ==="
