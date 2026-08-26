@@ -27,7 +27,7 @@ jobs:
 
             echo "### fresh clone via deploy key (as opsbot, so it uses opsbot's own key) ###"
             rm -rf /tmp/peritajes-clone
-            git clone git@github.com:pascalcorrea/web-conectamente-auditoria.git /tmp/peritajes-clone
+            GIT_SSH_COMMAND="ssh -i ~/.ssh/opsbot_key -o IdentitiesOnly=yes" git clone git@github.com:pascalcorrea/web-conectamente-auditoria.git /tmp/peritajes-clone
             sudo mv /tmp/peritajes-clone /var/www/peritajes
 
             echo "### write .env (placeholders for Brevo -- fill in real values later) ###"
