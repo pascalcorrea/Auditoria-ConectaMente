@@ -5,6 +5,7 @@ describe('Flujo completo: caso-a-caso', () => {
   let casoId: string
   let medicoId: string
   let clienteId: string
+  let organizacionId: string
 
   beforeAll(async () => {
     // Setup: crear datos de prueba
@@ -45,6 +46,7 @@ describe('Flujo completo: caso-a-caso', () => {
         rutEvaluado: '12345678-9',
         estado: 'recibido',
         tipoLicencia: 'Enfermedad',
+        fechaEmisionLicencia: new Date(),
         fechaIngreso: new Date(),
         fechaLimite: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
         prioridad: 'normal',
@@ -55,6 +57,7 @@ describe('Flujo completo: caso-a-caso', () => {
     casoId = caso.id
     medicoId = medico.id
     clienteId = cliente.id
+    organizacionId = org.id
   })
 
   it('Flujo 1: Caso creado en estado recibido', async () => {
@@ -121,7 +124,7 @@ describe('Flujo completo: caso-a-caso', () => {
         where: { id: informe.id },
         data: {
           firmaTimestamp: new Date(),
-          firmaProveedor: 'mock',
+          firmaProveedor: 'otro',
           archivoFirmadoUrl: '/pdfs/test-signed.pdf',
         },
       })
@@ -137,7 +140,15 @@ describe('Flujo completo: caso-a-caso', () => {
   })
 
   afterAll(async () => {
-    // Cleanup
+    // Guard: an unset casoId would make deleteMany's `where` unfiltered and
+    // wipe every row in the table — bail out if setup didn't actually run.
+    if (!casoId) return
+
+    // Cleanup — children first, FKs to Caso/Usuario/Organizacion have no cascade delete
+    await prisma.informe.deleteMany({ where: { casoId } })
+    await prisma.sesion.deleteMany({ where: { casoId } })
     await prisma.caso.deleteMany({ where: { id: casoId } })
+    await prisma.usuario.deleteMany({ where: { id: { in: [medicoId, clienteId] } } })
+    await prisma.organizacion.deleteMany({ where: { id: organizacionId } })
   })
 })

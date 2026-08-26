@@ -1,11 +1,14 @@
 import bcrypt from 'bcryptjs'
+import { PrismaClient } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
 
 if (process.env.NODE_ENV === 'production') {
   throw new Error('El seed contiene datos de prueba — no ejecutar en producción')
 }
 
-const PrismaClient = require('@prisma/client').PrismaClient
-const prisma = new PrismaClient()
+const prisma = new PrismaClient({
+  adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL || '' }),
+} as any)
 
 async function main() {
   const passwordHash = await bcrypt.hash('ChangeMe123!', 10)

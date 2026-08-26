@@ -10,7 +10,7 @@ import { Card } from '@/components/ui/Card'
 const DEFAULT_ROUTE_BY_ROL: Record<string, string> = {
   backoffice: '/admin',
   cliente: '/cliente/casos',
-  medico: '/medico',
+  medico: '/medico/casos',
 }
 
 function esCallbackUrlSegura(url: string): boolean {

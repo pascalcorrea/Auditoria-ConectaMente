@@ -17,7 +17,9 @@ export default defineConfig(({ mode }) => {
       // Exclude git worktrees (superpowers:using-git-worktrees creates them
       // under .worktrees/) — otherwise running tests from the main checkout
       // while a worktree exists double-runs every test file it contains.
-      exclude: [...configDefaults.exclude, '**/.worktrees/**'],
+      // e2e/ holds Playwright specs (see playwright.config.ts) — they use
+      // Playwright's own test.describe() and can't run under vitest.
+      exclude: [...configDefaults.exclude, '**/.worktrees/**', 'e2e/**'],
       // This project's tests hit a real, shared local Postgres (no mocks,
       // no per-worktree isolation) — some tests (e.g. lib/asignacion.test.ts)
       // temporarily mutate shared rows (deactivating pre-existing médicos)

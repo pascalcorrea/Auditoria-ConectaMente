@@ -1,11 +1,11 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { signIn, getSession } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { LoginForm } from './LoginForm'
 
 vi.mock('next-auth/react', () => ({
   signIn: vi.fn(),
-  getSession: vi.fn(),
+  useSession: vi.fn(),
 }))
 
 vi.mock('next/navigation', () => ({
@@ -14,7 +14,7 @@ vi.mock('next/navigation', () => ({
 }))
 
 const mockedSignIn = signIn as unknown as ReturnType<typeof vi.fn>
-const mockedGetSession = getSession as unknown as ReturnType<typeof vi.fn>
+const mockedUseSession = useSession as unknown as ReturnType<typeof vi.fn>
 const mockedUseRouter = useRouter as unknown as ReturnType<typeof vi.fn>
 const mockedUseSearchParams = useSearchParams as unknown as ReturnType<typeof vi.fn>
 
@@ -29,14 +29,15 @@ describe('LoginForm post-login redirect', () => {
 
   beforeEach(() => {
     push.mockClear()
-    mockedGetSession.mockClear()
+    mockedUseSession.mockReset()
+    mockedUseSession.mockReturnValue({ data: null, status: 'unauthenticated' })
     mockedUseRouter.mockReturnValue({ push })
   })
 
   it('redirects a cliente user to /cliente/casos when no callbackUrl is present', async () => {
     mockedUseSearchParams.mockReturnValue({ get: () => null })
     mockedSignIn.mockResolvedValue({ error: null })
-    mockedGetSession.mockResolvedValue({ user: { rol: 'cliente' } })
+    mockedUseSession.mockReturnValue({ data: { user: { rol: 'cliente' } }, status: 'authenticated' })
 
     render(<LoginForm />)
     fillAndSubmit()
@@ -47,7 +48,7 @@ describe('LoginForm post-login redirect', () => {
   it('redirects a backoffice user to /admin when no callbackUrl is present', async () => {
     mockedUseSearchParams.mockReturnValue({ get: () => null })
     mockedSignIn.mockResolvedValue({ error: null })
-    mockedGetSession.mockResolvedValue({ user: { rol: 'backoffice' } })
+    mockedUseSession.mockReturnValue({ data: { user: { rol: 'backoffice' } }, status: 'authenticated' })
 
     render(<LoginForm />)
     fillAndSubmit()
@@ -58,14 +59,12 @@ describe('LoginForm post-login redirect', () => {
   it('honors an explicit callbackUrl over the role-based default', async () => {
     mockedUseSearchParams.mockReturnValue({ get: (key: string) => (key === 'callbackUrl' ? '/admin/casos/nuevo' : null) })
     mockedSignIn.mockResolvedValue({ error: null })
-    mockedGetSession.mockResolvedValue({ user: { rol: 'backoffice' } })
+    mockedUseSession.mockReturnValue({ data: { user: { rol: 'backoffice' } }, status: 'authenticated' })
 
     render(<LoginForm />)
     fillAndSubmit()
 
     await waitFor(() => expect(push).toHaveBeenCalledWith('/admin/casos/nuevo'))
-    // A callbackUrl short-circuits before getSession is ever needed.
-    expect(mockedGetSession).not.toHaveBeenCalled()
   })
 
   it('does not redirect on invalid credentials', async () => {
@@ -82,7 +81,7 @@ describe('LoginForm post-login redirect', () => {
   it('rejects an absolute-URL callbackUrl (open redirect) and falls back to the role default', async () => {
     mockedUseSearchParams.mockReturnValue({ get: (key: string) => (key === 'callbackUrl' ? 'https://evil.com' : null) })
     mockedSignIn.mockResolvedValue({ error: null })
-    mockedGetSession.mockResolvedValue({ user: { rol: 'cliente' } })
+    mockedUseSession.mockReturnValue({ data: { user: { rol: 'cliente' } }, status: 'authenticated' })
 
     render(<LoginForm />)
     fillAndSubmit()
@@ -94,7 +93,7 @@ describe('LoginForm post-login redirect', () => {
   it('rejects a protocol-relative callbackUrl (open redirect) and falls back to the role default', async () => {
     mockedUseSearchParams.mockReturnValue({ get: (key: string) => (key === 'callbackUrl' ? '//evil.com' : null) })
     mockedSignIn.mockResolvedValue({ error: null })
-    mockedGetSession.mockResolvedValue({ user: { rol: 'cliente' } })
+    mockedUseSession.mockReturnValue({ data: { user: { rol: 'cliente' } }, status: 'authenticated' })
 
     render(<LoginForm />)
     fillAndSubmit()
