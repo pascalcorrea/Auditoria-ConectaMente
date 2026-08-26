@@ -1,0 +1,31 @@
+name: Diagnose other domains (temporary, read-only)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inventory cal/crm/nidoapp/staging
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            echo "=== whoami ==="
+            whoami
+            echo ""
+            echo "=== docker ps -a ==="
+            docker ps -a 2>&1
+            echo ""
+            echo "=== ports 3001, 3003, 3004, 3030 ==="
+            ss -tlnp 2>&1 | grep -E ":3001|:3003|:3004|:3030" || echo "ss failed or nothing listening (may need root)"
+            echo ""
+            echo "=== /var/www listing ==="
+            ls -la /var/www/ 2>&1
+            echo ""
+            echo "=== relevant dirs ==="
+            find / -maxdepth 3 \( -iname "*cal*" -o -iname "*nidoapp*" -o -iname "*twenty*" \) 2>/dev/null | grep -vE "^/proc|^/sys|/usr/|/snap/"
