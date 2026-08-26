@@ -7,7 +7,7 @@ jobs:
   diagnose:
     runs-on: ubuntu-latest
     steps:
-      - name: Clean up port 3100 and restart cleanly
+      - name: Check nginx status and config
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -15,26 +15,19 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            echo "=== what's holding port 3100 ==="
-            ss -tlnp | grep 3100 || true
+            echo "=== nginx status ==="
+            systemctl status nginx --no-pager -l | head -20 || true
             echo ""
-            echo "=== pm2 delete the crash-looping process ==="
-            pm2 delete auditoria-conectamente || true
+            echo "=== nginx config test ==="
+            nginx -t 2>&1 || true
             echo ""
-            echo "=== kill anything still bound to 3100 (orphan from a previous run) ==="
-            fuser -k 3100/tcp || true
-            sleep 2
+            echo "=== sites-enabled configs mentioning app.conectamente.cl or 3100 ==="
+            grep -rl "app.conectamente.cl\|:3100" /etc/nginx/sites-enabled/ 2>/dev/null || true
             echo ""
-            echo "=== confirm port is free ==="
-            ss -tlnp | grep 3100 || echo "port 3100 is free"
+            grep -A5 "server_name\|proxy_pass" /etc/nginx/sites-enabled/* 2>/dev/null || true
             echo ""
-            echo "=== start fresh ==="
-            cd ${{ secrets.PROJECT_DIR }} || exit 1
-            pm2 start ecosystem.config.js || exit 1
-            sleep 3
+            echo "=== recent nginx error log ==="
+            tail -30 /var/log/nginx/error.log 2>/dev/null || true
             echo ""
             echo "=== pm2 status ==="
             pm2 status || true
-            echo ""
-            echo "=== curl localhost:3100 ==="
-            curl -sv http://localhost:3100/login 2>&1 | head -15 || true
