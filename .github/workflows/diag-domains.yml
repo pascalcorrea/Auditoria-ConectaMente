@@ -18,15 +18,17 @@ jobs:
           script: |
             set -x
 
-            echo "### backup the wrong (Core-code) directory ###"
-            sudo mv /var/www/peritajes /var/www/peritajes.wrong-backup-$(date +%Y%m%d%H%M%S)
+            echo "### backup the wrong (Core-code) directory, if still present ###"
+            sudo mv /var/www/peritajes /var/www/peritajes.wrong-backup-$(date +%Y%m%d%H%M%S) 2>&1 || true
 
             echo "### trust github.com host key for opsbot ###"
             mkdir -p ~/.ssh
             ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
 
-            echo "### fresh clone via deploy key ###"
-            sudo git clone git@github.com:pascalcorrea/web-conectamente-auditoria.git /var/www/peritajes
+            echo "### fresh clone via deploy key (as opsbot, so it uses opsbot's own key) ###"
+            rm -rf /tmp/peritajes-clone
+            git clone git@github.com:pascalcorrea/web-conectamente-auditoria.git /tmp/peritajes-clone
+            sudo mv /tmp/peritajes-clone /var/www/peritajes
 
             echo "### write .env (placeholders for Brevo -- fill in real values later) ###"
             sudo tee /var/www/peritajes/.env > /dev/null <<'EOF'
